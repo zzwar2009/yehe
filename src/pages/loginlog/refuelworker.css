@@ -1,0 +1,47 @@
+.page {
+    background-color: #fff;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.header_create {
+    width: 65%;
+}
+
+.header_search {
+    width: 25%;
+}
+
+.table {
+    padding: 0 20px;
+}
+
+.createModal {
+    width: 100%;
+}
+
+.createModal_line {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+
+.createModal_line_item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 20px;
+    width: 30%;
+}
+
+.createModal_line_item_span {
+    width: 45%;
+}

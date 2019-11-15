@@ -1,7 +1,9 @@
 import { routerRedux } from 'dva/router';
 import { stringify } from 'querystring';
 import { fakeAccountLogin, getFakeCaptcha } from '@/services/login';
-import { setAuthority } from '@/utils/authority';
+import { setAuthority ,delAuthority} from '@/utils/authority';
+
+import { setToken ,delToken} from '@/utils/token';
 import { getPageQuery } from '@/utils/utils';
 const Model = {
   namespace: 'login',
@@ -44,7 +46,8 @@ const Model = {
 
     *logout(_, { put }) {
       const { redirect } = getPageQuery(); // redirect
-
+      delAuthority();
+      delToken();
       if (window.location.pathname !== '/user/login' && !redirect) {
         yield put(
           routerRedux.replace({
@@ -59,7 +62,10 @@ const Model = {
   },
   reducers: {
     changeLoginStatus(state, { payload }) {
+      payload.currentAuthority='admin';// 设置假的权限，拥有所有权限
       setAuthority(payload.currentAuthority);
+      // 站点油token
+      setToken('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIxMDAxNCIsIlRpbWVTdGFtcCI6MTU3NDQwMzk5MX0.yY-UN_sClSBYzQujDoiy0K8pLPQWo98H6XQ4yxknnqc');
       return { ...state, status: payload.status, type: payload.type };
     },
   },

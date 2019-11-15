@@ -72,66 +72,21 @@ class OilPerson extends Component {
             //     width: 50,
             // },
             {
-                title: '用户编号',
+                title: '编号',
                 dataIndex: 'userid',
                 key: 'userid',
                 align: 'center',
                 width: 100,
             },
-            {
-                title: '用户姓名',
-                dataIndex: 'nicknamenative',
-                key: 'nicknamenative',
-                align: 'center',
-                width: 100,
-            },
-            {
-                title: '登录账号',
-                dataIndex: 'mobile',
-                key: 'mobile',
-                align: 'center',
-                width: 150,
-            },
-            {
-                title: '账户状态',
-                dataIndex: 'status',
-                key: 'status',
-                align: 'center',
-                width: 80,
-                render: (text, record, index) => {
-                    if (text == 3) {
-                        return <div>开启</div>;
-                    } else if (text == 8) {
-                        return <div>废弃</div>;
-                    } else if (text == 6) {
-                        return <div>暂停</div>;
-                    }
-                    return <div>未知</div>;
-                },
-                ...this.dropDownStatus(),
-            },
-            {
-                title: '用户角色',
-                dataIndex: 'roleDescription',
-                key: 'roleDescription',
-                align: 'center',
-                width: 80,
-                ...this.dropDownRole(),
-            },
             // {
-            //     title: '油站编号',
-            //     dataIndex: 'supplierASCode',
-            //     key: 'supplierASCode',
+            //     title: '意图名称',
+            //     dataIndex: 'nicknamenative',
+            //     key: 'nicknamenative',
             //     align: 'center',
-            // },
-            // {
-            //     title: '油站名称',
-            //     dataIndex: 'supplierASName',
-            //     key: 'supplierASName',
-            //     align: 'center',
+            //     width: 100,
             // },
             {
-                title: '创建日期',
+                title: '发送时间',
                 dataIndex: 'enterTime',
                 key: 'enterTime',
                 align: 'center',
@@ -140,22 +95,7 @@ class OilPerson extends Component {
                     return moment(text).format(dateFormat);
                 },
             },
-            {
-                title: '最后登录时间',
-                dataIndex: 'lastLoginDT',
-                key: 'lastLoginDT',
-                align: 'center',
-                width: 150,
-                render: (text, record, index) => {
-                    return moment(text).format(dateFormat);
-                },
-            },
-            // {
-            //     title: '油站类型',
-            //     dataIndex: 'oiltype',
-            //     key: 'oiltype',
-            //     align: 'center',
-            // },
+            
             {
                 title: '操作',
                 dataIndex: 'operate',
@@ -166,28 +106,14 @@ class OilPerson extends Component {
                 render: (text, record, index) => (
                     <div>
                         <Button type="primary" onClick={() => this.showChangeEntityModal(record)}>
-                            修改信息
+                            查看
                         </Button>
                         <Button
-                            type="primary"
-                            style={{ marginLeft: 10 }}
-                            onClick={() => this.showChangePWdModal(record)}
-                        >
-                            修改密码
-                        </Button>
-                        <Button
-                            type="primary"
-                            style={{ marginLeft: 10 }}
-                            onClick={() => this.showBindStationModal(record)}
-                        >
-                            油站绑定
-                        </Button>
-                        {/* <Button
                             style={{ marginLeft: 10 }}
                             onClick={() => this.DeleteEntity(record)}
                         >
                             删除
-                        </Button> */}
+                        </Button>
                     </div>
                 ),
             },
@@ -405,7 +331,7 @@ class OilPerson extends Component {
         );
         const addAction = (
             <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <span style={{ fontSize: 20, fontWeight: 'bold', display: 'flex' }}>用户列表</span>
+                <span style={{ fontSize: 20, fontWeight: 'bold', display: 'flex' }}>主动消息</span>
                 <Button
                     type="primary"
                     style={{ marginLeft: 20 }}
@@ -431,8 +357,6 @@ class OilPerson extends Component {
                     />
                 </Card>
                 <CreateEntityModal />
-                <ChangePwdModal />
-                <RelatedStationModal />
             </div>
         );
     }

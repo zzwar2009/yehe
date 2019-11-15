@@ -2,7 +2,8 @@ import request from '../utils/request';
 import UrlConfig from '@/config/host.config';
 // 用户关联油站相关
 export async function queryWorkers(params) {
-    return request(UrlConfig.trans_ip, '/OilUserGerList', {
+    console.log(params)
+    return request(UrlConfig.trans_ip,'/OilUserGerList', {
         method: 'GET',
         data: params,
     });

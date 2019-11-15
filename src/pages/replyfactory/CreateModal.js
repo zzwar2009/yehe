@@ -1,20 +1,54 @@
 /* eslint-disable */
 import React, { Component } from 'react';
-import { Input, Modal, DatePicker, Row, Col, Form, message, Select } from 'antd';
+import { Input, Modal, DatePicker, Row, Col, Form, message, Select,Icon,Button  } from 'antd';
 import { connect } from 'dva';
 import { bindActionCreator } from '@/utils/bindActionCreators';
 import { queryList, showModal, createEntity, CreateModal, UpdateStation } from './actionCreater';
 import { PAGE_SIZE } from './const';
 import RoleSelect from '@/pages/components/RoleSelect';
 import StatusSelect from '@/pages/components/StatusSelect';
+import PicturesWall from '@/pages/components/PicturesWall/index';
 import moment from 'moment';
 import { formatToUTC, checkField } from '@/utils/utils';
+
 
 const dateFormat = 'YYYY-MM-DD';
 const Option = Select.Option;
 const { confirm } = Modal;
 // import styles from './OilStation.css';
-
+let id = 0;
+const fileList = [
+    {
+        uid: '-1',
+        name: 'image.png',
+        status: 'done',
+        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+    {
+        uid: '-2',
+        name: 'image.png',
+        status: 'done',
+        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+    {
+        uid: '-3',
+        name: 'image.png',
+        status: 'done',
+        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+    {
+        uid: '-4',
+        name: 'image.png',
+        status: 'done',
+        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+    {
+        uid: '-5',
+        name: 'image.png',
+        status: 'done',
+        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+]
 function mapDispatchToProps(dispatch) {
     return {
         queryList: bindActionCreator(queryList, dispatch),
@@ -25,11 +59,11 @@ function mapDispatchToProps(dispatch) {
     };
 }
 @connect(
-    ({ refuelworker }) => {
+    ({ replyfactory }) => {
         return {
-            addOilModalVisible: refuelworker.addOilModalVisible,
-            actiontype: refuelworker.actiontype, // 代表是  create还是update
-            data: refuelworker.formdata, // 表单的初始值，更新会回填原来的值
+            addOilModalVisible: replyfactory.addOilModalVisible,
+            actiontype: replyfactory.actiontype, // 代表是  create还是update
+            data: replyfactory.formdata, // 表单的初始值，更新会回填原来的值
         };
     },
     mapDispatchToProps
@@ -172,9 +206,93 @@ class createStationModal extends Component {
         this.closeModal();
     };
 
+    remove = k => {
+        const { form } = this.props;
+        // can use data-binding to get
+        const keys = form.getFieldValue('keys');
+        // We need at least one passenger
+        if (keys.length === 1) {
+            return;
+        }
+
+        // can use data-binding to set
+        form.setFieldsValue({
+            keys: keys.filter(key => key !== k),
+        });
+    };
+
+    add = () => {
+        const { form } = this.props;
+        // can use data-binding to get
+        const keys = form.getFieldValue('keys');
+        const nextKeys = keys.concat(id++);
+        // can use data-binding to set
+        // important! notify form to detect changes
+        form.setFieldsValue({
+            keys: nextKeys,
+        });
+    };
+
+    handleSubmit = e => {
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+            const { keys, names } = values;
+            console.log('Received values of form: ', values);
+            console.log('Merged values:', keys.map(key => names[key]));
+            }
+        });
+    };
+
     render() {
+
+        const { getFieldDecorator, getFieldValue } = this.props.form;
+        const formItemLayout = {
+          labelCol: {
+            xs: { span: 24 },
+            sm: { span: 4 },
+          },
+          wrapperCol: {
+            xs: { span: 24 },
+            sm: { span: 20 },
+          },
+        };
+        const formItemLayoutWithOutLabel = {
+          wrapperCol: {
+            xs: { span: 24, offset: 0 },
+            sm: { span: 20, offset: 4 },
+          },
+        };
+        getFieldDecorator('keys', { initialValue: [] });
+        const keys = getFieldValue('keys');
+        const formItems = keys.map((k, index) => (
+          <Form.Item
+            {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+            label={index === 0 ? '文本消息' : ''}
+            required={false}
+            key={k}
+          >
+            {getFieldDecorator(`names[${k}]`, {
+              validateTrigger: ['onChange', 'onBlur'],
+              rules: [
+                {
+                  required: true,
+                  whitespace: true,
+                  message: "Please input passenger's name or delete this field.",
+                },
+              ],
+            })(<textarea placeholder="passenger name" style={{ width: '60%', marginRight: 8 }} />)}
+            {keys.length > 1 ? (
+              <Icon
+                className="dynamic-delete-button"
+                type="minus-circle-o"
+                onClick={() => this.remove(k)}
+              />
+            ) : null}
+          </Form.Item>
+        ));
         const { addOilModalVisible, form, actiontype, data } = this.props;
-        const { getFieldDecorator } = form;
+        // const { getFieldDecorator } = form;
         const {
             userobjno, // 油站编号
             userobjname, // 油站名称
@@ -202,8 +320,8 @@ class createStationModal extends Component {
         //         DriverBenefit: oilRatio, // 司机返利比例
         //         StartTime: startDT, // 合作时间
         const titleObj = {
-            update: '修改用户信息',
-            create: '新建用户',
+            update: '修改回复',
+            create: '配置回复',
         };
         //moment类型
         let dateValue = null;
@@ -227,6 +345,23 @@ class createStationModal extends Component {
         let userStatusDom = ''; // 用户状态
         let userRoleDom = ''; // 用户角色
         let userIdDom = ''; // 用户id
+        let intentionName = ""// 意图名称
+
+        intentionName = getFieldDecorator('mobile', {
+            rules: [
+                { required: true, message: '请输入意图名称' },
+            ],
+            initialValue: mobile,
+        })(<Input type="text" placeholder="请输入意图名称" />);
+
+
+        let picWall  = ''; //图片
+
+        picWall = getFieldDecorator('fileList', {
+            initialValue: fileList,
+            // valuePropName:'filelist'
+        })(<PicturesWall />);
+
         if (actiontype === 'create') {
             // stationDom = getFieldDecorator('stationId', {
             //     rules: [{ required: true, message: '请选择油站' }],
@@ -241,36 +376,36 @@ class createStationModal extends Component {
             //     initialValue: regionName,
             // })(<Input type="text" placeholder="请输入所属省区" disabled />);
 
-            userNameDom = getFieldDecorator('nicknamenative', {
-                rules: [{ required: true, message: '请输入姓名' }],
-                initialValue: nicknamenative,
-            })(<Input type="text" placeholder="请输入姓名" />);
+            // userNameDom = getFieldDecorator('nicknamenative', {
+            //     rules: [{ required: true, message: '请输入姓名' }],
+            //     initialValue: nicknamenative,
+            // })(<Input type="text" placeholder="请输入姓名" />);
 
-            userMobileDom = getFieldDecorator('mobile', {
-                rules: [
-                    { required: true, message: '请输入手机号码' },
-                    {
-                        // validator: checkField(/^1(3|4|5|7|8)\d{9}$/, '手机号码有误，请重填写'),
-                        validator: checkField(/^1\d{10}$/, '手机号码有误，请重填写'),
-                    },
-                ],
-                initialValue: mobile,
-            })(<Input type="text" placeholder="请输入手机号码" />);
+            // userMobileDom = getFieldDecorator('mobile', {
+            //     rules: [
+            //         { required: true, message: '请输入手机号码' },
+            //         {
+            //             // validator: checkField(/^1(3|4|5|7|8)\d{9}$/, '手机号码有误，请重填写'),
+            //             validator: checkField(/^1\d{10}$/, '手机号码有误，请重填写'),
+            //         },
+            //     ],
+            //     initialValue: mobile,
+            // })(<Input type="text" placeholder="请输入手机号码" />);
 
-            userPwdDom = getFieldDecorator('password', {
-                rules: [{ required: true, message: '请输入登录密码' }],
-                initialValue: password,
-            })(<Input type="text" placeholder="请输入登录密码" />);
+            // userPwdDom = getFieldDecorator('password', {
+            //     rules: [{ required: true, message: '请输入登录密码' }],
+            //     initialValue: password,
+            // })(<Input type="text" placeholder="请输入登录密码" />);
 
-            userStatusDom = getFieldDecorator('status', {
-                rules: [{ required: true, message: '请选择状态' }],
-                initialValue: status,
-            })(<StatusSelect />);
+            // userStatusDom = getFieldDecorator('status', {
+            //     rules: [{ required: true, message: '请选择状态' }],
+            //     initialValue: status,
+            // })(<StatusSelect />);
 
-            userRoleDom = getFieldDecorator('role', {
-                rules: [{ required: true, message: '请选择角色' }],
-                initialValue: role,
-            })(<RoleSelect />);
+            // userRoleDom = getFieldDecorator('role', {
+            //     rules: [{ required: true, message: '请选择角色' }],
+            //     initialValue: role,
+            // })(<RoleSelect />);
         } else if (actiontype === 'update') {
             // stationDom = getFieldDecorator('stationId', {
             //     rules: [{ required: true, message: '请选择油站' }],
@@ -287,40 +422,40 @@ class createStationModal extends Component {
                 initialValue: userid,
             })(<Input type="text" disabled />);
 
-            userNameDom = getFieldDecorator('nicknamenative', {
-                rules: [{ required: true, message: '请输入姓名' }],
-                initialValue: nicknamenative,
-            })(<Input type="text" placeholder="请输入姓名" />);
+            // userNameDom = getFieldDecorator('nicknamenative', {
+            //     rules: [{ required: true, message: '请输入姓名' }],
+            //     initialValue: nicknamenative,
+            // })(<Input type="text" placeholder="请输入姓名" />);
 
-            userMobileDom = getFieldDecorator('mobile', {
-                rules: [
-                    { required: true, message: '请输入手机号码' },
-                    {
-                        // validator: checkField(/^1(3|4|5|7|8)\d{9}$/, '手机号码有误，请重填写'),
-                        validator: checkField(/^1\d{10}$/, '手机号码有误，请重填写'),
-                    },
-                ],
-                initialValue: mobile,
-            })(<Input type="text" placeholder="请输入手机号码" />);
+            // userMobileDom = getFieldDecorator('mobile', {
+            //     rules: [
+            //         { required: true, message: '请输入手机号码' },
+            //         {
+            //             // validator: checkField(/^1(3|4|5|7|8)\d{9}$/, '手机号码有误，请重填写'),
+            //             validator: checkField(/^1\d{10}$/, '手机号码有误，请重填写'),
+            //         },
+            //     ],
+            //     initialValue: mobile,
+            // })(<Input type="text" placeholder="请输入手机号码" />);
 
-            userPwdDom = '';
+            // userPwdDom = '';
 
-            userStatusDom = getFieldDecorator('status', {
-                rules: [{ required: true, message: '请选择状态' }],
-                initialValue: status,
-            })(<StatusSelect />);
+            // userStatusDom = getFieldDecorator('status', {
+            //     rules: [{ required: true, message: '请选择状态' }],
+            //     initialValue: status,
+            // })(<StatusSelect />);
 
-            userRoleDom = getFieldDecorator('role', {
-                rules: [{ required: true, message: '请选择角色' }],
-                initialValue: role,
-            })(<RoleSelect />);
+            // userRoleDom = getFieldDecorator('role', {
+            //     rules: [{ required: true, message: '请选择角色' }],
+            //     initialValue: role,
+            // })(<RoleSelect />);
         }
 
         return (
             <Modal
                 title={titleObj[actiontype]}
                 visible={addOilModalVisible}
-                onOk={this.onOk}
+                onOk={this.handleSubmit}
                 confirmLoading={false}
                 onCancel={this.onCancel}
                 width="80%"
@@ -338,25 +473,21 @@ class createStationModal extends Component {
                     )}
                     <Row type="flex" gutter={16}>
                         <Col span={12}>
-                            <Form.Item label="用户姓名">{userNameDom}</Form.Item>
+                            <Form.Item label="意图名称">{intentionName}</Form.Item>
                         </Col>
-                        <Col span={12}>
-                            <Form.Item label="状态">{userStatusDom}</Form.Item>
-                        </Col>
+                        
                     </Row>
-                    <Row type="flex" gutter={16}>
-                        <Col span={12}>
-                            <Form.Item label="手机号">{userMobileDom}</Form.Item>
-                        </Col>
-                        {actiontype === 'create' && (
-                            <Col span={12}>
-                                <Form.Item label="登录密码">{userPwdDom}</Form.Item>
-                            </Col>
-                        )}
-                    </Row>
+
+                    <Form.Item {...formItemLayoutWithOutLabel}>
+                        <Button type="dashed" onClick={this.add} style={{ width: '60%' }}>
+                            <Icon type="plus" /> Add field
+                        </Button>
+                    </Form.Item>
+                    {formItems}
+
                     <Row type="flex" gutter={16}>
                         <Col span={24}>
-                            <Form.Item label="用户角色">{userRoleDom}</Form.Item>
+                            {picWall}
                         </Col>
                     </Row>
                 </Form>

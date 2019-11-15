@@ -1,5 +1,5 @@
 /* eslint-disable */
-const namespace = 'refuelworker';
+const namespace = 'sayhi';
 export function queryList(payload) {
     return {
         type: `${namespace}/queryList`,

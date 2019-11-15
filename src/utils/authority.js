@@ -31,3 +31,11 @@ export function setAuthority(authority) {
 
   reloadAuthorized();
 }
+
+
+export function delAuthority
+() {
+  localStorage.removeItem('antd-pro-authority');
+
+  reloadAuthorized();
+}

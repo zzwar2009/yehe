@@ -7,6 +7,8 @@ const { pwa, primaryColor } = defaultSettings; // preview.pro.ant.design only do
 // import pageRoutes from './router.config';
 const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION } = process.env;
 const isAntDesignProPreview = ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site';
+
+import routerconfig from './router.config';
 const plugins = [
   [
     'umi-plugin-react',
@@ -76,98 +78,7 @@ export default {
   },
   devtool: isAntDesignProPreview ? 'source-map' : false,
   // umi routes: https://umijs.org/zh/guide/router.html
-  routes: [
-    {
-      path: '/user',
-      component: '../layouts/UserLayout',
-      routes: [
-        {
-          name: 'login',
-          path: '/user/login',
-          component: './user/login',
-        },
-      ],
-    },
-    {
-      path: '/',
-      component: '../layouts/SecurityLayout',
-      routes: [
-        {
-          path: '/',
-          component: '../layouts/BasicLayout',
-          authority: ['admin', 'user'],
-          routes: [
-            {
-              path: '/',
-              redirect: '/welcome',
-            },
-            {
-              path: '/welcome',
-              name: 'welcome',
-              icon: 'smile',
-              component: './Welcome',
-            },
-            {
-              path: '/sysadmin',
-              name: 'sysadmin',
-              icon: 'smile',
-              authority: ['user', 'xxx'],
-              // component: './Welcome',
-              routes: [
-                {
-                  path: '/sysadmin/loginlog',
-                  name: 'loginlog',
-                  component: './Welcome',
-                  authority: ['user', 'xxx'],
-                },
-              ],
-            },
-            {
-              path: '/proconfig',
-              name: 'proconfig',
-              icon: 'smile',
-              // component: './Welcome',
-              routes: [{ path: '/proconfig/todaynews', name: 'todaynews', component: './Welcome' }],
-            },
-            {
-              path: '/prodata',
-              name: 'prodata',
-              icon: 'smile',
-              // component: './Welcome',
-              routes: [
-                { path: '/prodata/resource', name: 'resource', component: './Welcome' },
-                { path: '/prodata/dakagroup', name: 'dakagroup', component: './Welcome' },
-              ],
-            },
-            {
-              path: '/talkconfig',
-              name: 'talkconfig',
-              icon: 'smile',
-              // component: './Welcome',
-              routes: [
-                { path: '/talkconfig/sayhi', name: 'sayhi', component: './Welcome' },
-                { path: '/talkconfig/replyfactory', name: 'replyfactory', component: './Welcome' },
-                {
-                  path: '/talkconfig/initiativemsg',
-                  name: 'initiativemsg',
-                  component: './Welcome',
-                },
-              ],
-            },
-            {
-              component: './404',
-            },
-          ],
-        },
-        {
-          component: './404',
-        },
-      ],
-    },
-    {
-      component: './404',
-    },
-  ],
+  routes: routerconfig,
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     'primary-color': primaryColor,
