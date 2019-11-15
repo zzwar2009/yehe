@@ -111,9 +111,15 @@ export default {
               path: '/sysadmin',
               name: 'sysadmin',
               icon: 'smile',
+              authority: ['user', 'xxx'],
               // component: './Welcome',
               routes: [
-                { path: '/sysadmin/loginlog', name: 'loginlog', component: './Welcome' },
+                {
+                  path: '/sysadmin/loginlog',
+                  name: 'loginlog',
+                  component: './Welcome',
+                  authority: ['user', 'xxx'],
+                },
               ],
             },
             {
@@ -121,9 +127,7 @@ export default {
               name: 'proconfig',
               icon: 'smile',
               // component: './Welcome',
-              routes: [
-                { path: '/proconfig/todaynews', name: 'todaynews', component: './Welcome' },
-              ],
+              routes: [{ path: '/proconfig/todaynews', name: 'todaynews', component: './Welcome' }],
             },
             {
               path: '/prodata',
@@ -143,7 +147,11 @@ export default {
               routes: [
                 { path: '/talkconfig/sayhi', name: 'sayhi', component: './Welcome' },
                 { path: '/talkconfig/replyfactory', name: 'replyfactory', component: './Welcome' },
-                { path: '/talkconfig/initiativemsg', name: 'initiativemsg', component: './Welcome' },
+                {
+                  path: '/talkconfig/initiativemsg',
+                  name: 'initiativemsg',
+                  component: './Welcome',
+                },
               ],
             },
             {

@@ -26,7 +26,6 @@ const checkPermissions = (authority, currentAuthority, target, Exception) => {
     } else if (authority.includes(currentAuthority)) {
       return target;
     }
-
     return Exception;
   } // string 处理
 
