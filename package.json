@@ -6,7 +6,6 @@
   "scripts": {
     "analyze": "cross-env ANALYZE=1 umi build",
     "build": "umi build",
-    "deploy": "npm run site && npm run gh-pages",
     "fetch:blocks": "pro fetch-blocks && npm run prettier",
     "format-imports": "cross-env import-sort --write '**/*.{js,jsx,ts,tsx}'",
     "gh-pages": "cp CNAME ./dist/ && gh-pages -d dist",
@@ -25,7 +24,8 @@
     "test": "umi test",
     "test:all": "node ./tests/run-tests.js",
     "test:component": "umi test ./src/components",
-    "ui": "umi ui"
+    "ui": "umi ui",
+    "deploy": "cross-env BABELRC=true umi build && scp -r dist/* ubuntu@118.89.16.143:/data0/frontend"
   },
   "husky": {
     "hooks": {
