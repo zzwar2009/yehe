@@ -73,15 +73,15 @@ class OilPerson extends Component {
             // },
             {
                 title: '登陆时间',
-                dataIndex: 'userid',
-                key: 'userid',
+                dataIndex: 'created',
+                key: 'created',
                 align: 'center',
                 width: 100,
             },
             {
                 title: 'IP地址',
-                dataIndex: 'nicknamenative',
-                key: 'nicknamenative',
+                dataIndex: 'ip',
+                key: 'ip',
                 align: 'center',
                 width: 100,
             },
@@ -246,8 +246,8 @@ class OilPerson extends Component {
     getList = (page, params) => {
         const { queryList } = this.props;
         queryList({
-            pageIndex: page,
-            pageSize: PAGE_SIZE,
+            current: page,
+            size: PAGE_SIZE,
             ...params,
         });
     };
