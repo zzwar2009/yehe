@@ -7,7 +7,7 @@ import {
     bindStation,
     unBindStation,
     queryWorkerById,
-} from '@/services/refuelworker.api';
+} from '@/services/replyfactory.api';
 import { queryStations } from '@/services/station.api';
 const Model = {
     namespace: 'replyfactory',
@@ -47,14 +47,14 @@ const Model = {
         *queryList({ payload }, { call, put }) {
             try {
                 const response = yield call(queryWorkers, payload);
-                const { result, code, totalCount } = response;
-                if (code === 200) {
+                const { status, entities,total } = response;
+                if (status === 'OK') {
                     yield put({
                         type: 'updateList',
                         payload: {
-                            result,
-                            totalCount,
-                            pageIndex: payload.pageIndex,
+                            result:entities,
+                            totalCount:total,
+                            pageIndex: payload.current,
                         },
                     });
                 }

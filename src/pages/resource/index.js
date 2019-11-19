@@ -480,7 +480,7 @@ class OilPerson extends Component {
                     dataSource={datas}
                     footer={
                     <div>
-                        <b>ant design</b> footer part
+                        <b></b>
                     </div>
                     }
                     renderItem={this.renderItem}
