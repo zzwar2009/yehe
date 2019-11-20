@@ -81,7 +81,7 @@ const Model = {
 
         *delEntity({ payload }, { call, put }) {
             try {
-                const response = yield call(delEntity, { userId: payload });
+                const response = yield call(delEntity, { id: payload });
                 return new Promise(resolve => {
                     resolve(response);
                 });
@@ -143,12 +143,17 @@ const Model = {
 
         *updateModal({ payload }, { call, put }) {
             try {
-                const { userobjname, userobjno, userid } = payload;
+                const { 
+                    imgList,// 图片列表
+                    name, // 意图名称
+                    replyExtendsList,// 文本消息集合
+                    resourceList,// 资源集合
+                    id} = payload;
                 const response = yield call(queryWorkerById, {
-                    userId: userid,
+                    id: id,
                 });
-                const { code, result } = response;
-                if (code === 200 && result) {
+                const { status, entity } = response;
+                if (status === "OK" && entity) {
                     yield put({
                         type: 'updateModalAfter',
                         payload: {
@@ -214,22 +219,15 @@ const Model = {
             let newstate = Object.assign({}, state);
             newstate.addOilModalVisible = true;
             newstate.actiontype = 'update';
-            const { regionName, startDT, supplierASCode, supplierASName, userobjno } = payload;
-            let role = '';
-            if (payload.platRoleInfos && payload.platRoleInfos.length > 0) {
-                role = payload.platRoleInfos[0].roleId;
-            }
+            const { imgList,// 图片列表
+                name, // 意图名称
+                replyExtendsList,// 文本消息集合
+                resourceList,// 资源集合
+                id } = payload;
+            debugger
             newstate.formdata = {
-                ...payload,
-                role,
-                stationId: userobjno,
-                status: String(payload.status),
-                station: {
-                    regionName,
-                    startDT,
-                    supplierASCode,
-                    supplierASName,
-                },
+                ...payload
+                
             };
             console.log(newstate);
             return newstate;

@@ -14,8 +14,8 @@ export async function queryWorkers(params) {
 
 // 根据id查询用户信息
 export async function queryWorkerById(params) {
-    return request(UrlConfig.trans_ip, '/UserGet', {
-        method: 'GET',
+    return request(UrlConfig.new_host, 'chat/detailsReply', {
+        method: 'POST',
         data: params,
     });
 }
@@ -53,9 +53,9 @@ export async function changePwd(params) {
 
 // 删除油站
 export async function delEntity(params) {
-    return request(UrlConfig.trans_ip, '/OilUserOilUsersDelete', {
-        method: 'DELETE',
-        data: params,
+    return request(UrlConfig.new_host, 'chat/removeReply', {
+        method: 'POST',
+        data: {idsList:[params.id]},
     });
 }
 

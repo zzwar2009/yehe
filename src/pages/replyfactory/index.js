@@ -246,17 +246,17 @@ class OilPerson extends Component {
     DeleteEntity = record => {
         let that = this;
         confirm({
-            title: '删除用户',
-            content: `确定删除用户${record.nicknamenative} ？`,
+            title: '删除',
+            content: `确定删除'${record.name}' ？`,
             okText: '确定',
             okType: 'danger',
             cancelText: '取消',
             onOk() {
                 // 删除油站
                 const { delEntity } = that.props;
-                delEntity(record.userid).then(res => {
-                    const { code } = res;
-                    if (code === 200) {
+                delEntity(record.id).then(res => {
+                    const { status } = res;
+                    if (status === "OK") {
                         message.success('删除成功');
                         // 刷新列表
                         that.refreshList();
