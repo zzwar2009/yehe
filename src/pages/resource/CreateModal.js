@@ -3,6 +3,9 @@ import React, { Component } from 'react';
 import { Input, Modal, DatePicker, Row, Col, Form, message, Select,Upload,Icon } from 'antd';
 import { connect } from 'dva';
 import { bindActionCreator } from '@/utils/bindActionCreators';
+
+import { parseImgListStr } from '@/utils/utils';
+
 import { queryList, showModal, createEntity,updatEntity, CreateModal, UpdateStation } from './actionCreater';
 import { PAGE_SIZE } from './const';
 import RoleSelect from '@/pages/components/RoleSelect';
@@ -149,7 +152,6 @@ class createStationModal extends Component {
             type,// 资源类型
             years // 年代
         };
-        debugger
         updatEntity(queryData).then(res => {
             const { status } = res;
             if (status === "OK") {
@@ -293,15 +295,15 @@ class createStationModal extends Component {
         let timeDom = '';// 年代
         let resId = '';
         let picWall  = ''; //图片
-        console.log(imgList)
-        console.log(typeof imgList)
-        let imgListArr = [];
-        if(imgList && typeof imgList =='string' && imgList.length>0){
-            imgListArr = JSON.parse(imgList);
-        }
+        // console.log(imgList)
+        // console.log(typeof imgList)
+        // let imgListArr = [];
+        // if(imgList && typeof imgList =='string' && imgList.length>0){
+        //     imgListArr = JSON.parse(imgList);
+        // }
         
         picWall = getFieldDecorator('imgList', {
-            initialValue: imgListArr,
+            initialValue: parseImgListStr(imgList),
             // valuePropName:'filelist'
         })(<PicturesWall />);
 

@@ -15,7 +15,7 @@ import {
     message,
     List, Avatar,
 } from 'antd';
-
+import { parseImgListStr } from '@/utils/utils';
 // const listData = [];
 // for (let i = 0; i < 23; i++) {
 //   listData.push({
@@ -214,16 +214,16 @@ class OilPerson extends Component {
         let that = this;
         confirm({
             title: '删除用户',
-            content: `确定删除用户${record.nicknamenative} ？`,
+            content: `确定删除记录${record.name} ？`,
             okText: '确定',
             okType: 'danger',
             cancelText: '取消',
             onOk() {
                 // 删除油站
                 const { delEntity } = that.props;
-                delEntity(record.userid).then(res => {
-                    const { code } = res;
-                    if (code === 200) {
+                delEntity(record.id).then(res => {
+                    const { status } = res;
+                    if (status === "OK") {
                         message.success('删除成功');
                         // 刷新列表
                         that.refreshList();
@@ -275,30 +275,21 @@ class OilPerson extends Component {
     };
     
     renderItem = (item) =>{
-        // console.log(item)
-        return <List.Item onClick={()=>this.showChangeEntityModal(item)}
-            key={item.nicknamenative}
-            actions={[
-            <IconText type="star-o" text="156" key="list-vertical-star-o" />,
-            <IconText type="like-o" text="156" key="list-vertical-like-o" />,
-            <IconText type="message" text="2" key="list-vertical-message" />,
-            ]}
-            extra={
-            <img
-                width={272}
-                alt="logo"
-                src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-            />
-            }
-        >
-            <List.Item.Meta
-            avatar={<Avatar src={item.nicknamenative} />}
-            title={<a href={item.href}>{item.nicknamenative}</a>}
-            description={item.nicknamenative}
-            />
-            {item.nicknamenative}
-        </List.Item>
-            
+        console.log(item)
+        const {name,imgList,code,extraInformation} = item;
+        const imgs = parseImgListStr(imgList)
+        return (<List.Item
+            key={item.id}
+            onClick={()=>this.showChangeEntityModal(item)}
+            extra={<Button onClick={(e) => {e.stopPropagation();this.DeleteEntity(item)}}>删除</Button>}
+            >
+            <div >
+                <img src={imgs[0]} style={{width:'90px',height:'90px'}}/>
+                <p>{code}</p>
+                <p>{name}</p>
+                <p>{extraInformation}</p>
+            </div>
+        </List.Item>)
     } 
 
     render() {

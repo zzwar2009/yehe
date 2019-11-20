@@ -33,3 +33,13 @@ export const getAuthorityFromRouter = (router = [], pathname) => {
   if (authority) return authority;
   return undefined;
 };
+
+export const parseImgListStr = (imgList) => {
+  let imgListArr = [];
+  if(imgList && typeof imgList =='string' && imgList!='string' && imgList.length>0){
+      imgListArr = JSON.parse(imgList);
+  }
+  return imgListArr;
+};
+
+

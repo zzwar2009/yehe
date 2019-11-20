@@ -107,7 +107,7 @@ const Model = {
 
         *delEntity({ payload }, { call, put }) {
             try {
-                const response = yield call(delEntity, { userId: payload });
+                const response = yield call(delEntity, { id: payload });
                 return new Promise(resolve => {
                     resolve(response);
                 });

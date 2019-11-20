@@ -76,9 +76,9 @@ export async function changePwd(params) {
 
 // 删除油站
 export async function delEntity(params) {
-    return request(UrlConfig.trans_ip, '/OilUserOilUsersDelete', {
-        method: 'DELETE',
-        data: params,
+    return request(UrlConfig.new_host, 'resource/remove', {
+        method: 'POST',
+        data: {idsList:[params.id]},
     });
 }
 
