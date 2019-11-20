@@ -3,22 +3,22 @@ import React, { Component } from 'react';
 import { Input, Modal, DatePicker, Row, Col, Form, message, Select,Icon,Button  } from 'antd';
 import { connect } from 'dva';
 import { bindActionCreator } from '@/utils/bindActionCreators';
-import { queryList, showModal, createEntity, CreateModal, UpdateStation } from './actionCreater';
+import { queryList, showModal, createEntity, CreateModal, UpdateStation ,updatEntity} from './actionCreater';
 import { PAGE_SIZE } from './const';
 import RoleSelect from '@/pages/components/RoleSelect';
 import StatusSelect from '@/pages/components/StatusSelect';
 import PicturesWall from '@/pages/components/PicturesWall/index';
 import moment from 'moment';
 import { formatToUTC, checkField } from '@/utils/utils';
-import { parseImgListStr } from '@/utils/utils';
+import { parseImgListStr,getArrayfromLength } from '@/utils/utils';
 
 
 const dateFormat = 'YYYY-MM-DD';
 const Option = Select.Option;
 const { confirm } = Modal;
 // import styles from './OilStation.css';
-let id = 0;
-let cid = 0;
+// let id = 0;
+// let cid = 0;
 const fileList = [
     {
         uid: '-1',
@@ -56,10 +56,14 @@ function mapDispatchToProps(dispatch) {
         queryList: bindActionCreator(queryList, dispatch),
         showModal: bindActionCreator(showModal, dispatch),
         createEntity: bindActionCreator(createEntity, dispatch),
+        updateEntity: bindActionCreator(updatEntity, dispatch),
+
         CreateModal: bindActionCreator(CreateModal, dispatch),
         UpdateStation: bindActionCreator(UpdateStation, dispatch),
     };
 }
+
+
 @connect(
     ({ replyfactory }) => {
         return {
@@ -100,49 +104,42 @@ class createStationModal extends Component {
             if (actiontype === 'create') {
                 that.createEntityBefore(values);
             } else {
-                confirm({
-                    title: '提示',
-                    content: `确定修改？`,
-                    okText: '确定',
-                    okType: 'primary',
-                    cancelText: '取消',
-                    onOk() {
-                        that.updateEntity(values);
-                    },
-                    onCancel() {
-                        console.log('Cancel');
-                    },
-                });
+                // confirm({
+                //     title: '提示',
+                //     content: `确定修改？`,
+                //     okText: '确定',
+                //     okType: 'primary',
+                //     cancelText: '取消',
+                //     onOk() {
+                        
+                //     },
+                //     onCancel() {
+                //         console.log('Cancel');
+                //     },
+                // });
+                that.updateEntity(values);
             }
         });
     };
 
     updateEntity = formData => {
         let that = this;
-        const { createEntity } = this.props;
-
+        const { updateEntity } = this.props;
         const {
-            supplierASCode,
-            supplierASName,
-            nicknamenative,
-            mobile,
-            password,
-            status,
-            role,
+            id,
+            imgList,// 图片列表
+            name, // 意图名称
+            replyExtendsList,// 文本消息集合
+            resourceList// 资源集合
         } = formData;
-        const { userid } = this.props.data;
         let queryData = {
-            role,
-            userid: userid,
-            supplierASCode: supplierASCode,
-            supplierASName: supplierASName,
-            nickNameNative: nicknamenative,
-            loginName: mobile,
-            tel: mobile,
-            status: status,
-            isLogin: 2, // 是否允许登陆：0-不允许；2-允许
+            id,
+            imgList,// 图片列表
+            name, // 意图名称
+            replyExtendsList,// 文本消息集合
+            resourceList// 资源集合
         };
-        createEntity(queryData).then(res => {
+        updateEntity(queryData).then(res => {
             const { status } = res;
             if (status === "OK") {
                 message.success('提交成功');
@@ -226,7 +223,7 @@ class createStationModal extends Component {
         const { form } = this.props;
         // can use data-binding to get
         const keys = form.getFieldValue('keys');
-        const nextKeys = keys.concat(id++);
+        const nextKeys = keys.concat(keys.length);
         // can use data-binding to set
         // important! notify form to detect changes
         form.setFieldsValue({
@@ -253,7 +250,7 @@ class createStationModal extends Component {
         const { form } = this.props;
         // can use data-binding to get
         const keys = form.getFieldValue('ckeys');
-        const nextKeys = keys.concat(cid++);
+        const nextKeys = keys.concat(keys.length);
         // can use data-binding to set
         // important! notify form to detect changes
         form.setFieldsValue({
@@ -267,14 +264,18 @@ class createStationModal extends Component {
         const { addOilModalVisible, form, actiontype, data } = this.props;
         const { getFieldDecorator ,getFieldValue} = form;
         const {
-            
+            id,
             imgList,// 图片列表
             name, // 意图名称
             replyExtendsList,// 文本消息集合
             resourceList// 资源集合
         } = data;
-
-        getFieldDecorator('keys', { initialValue: [] });
+        // replyExtendsList
+        replyExtendsList.map((item,i) => {
+            return i;
+        })
+        getFieldDecorator('keys', { initialValue: getArrayfromLength(replyExtendsList) });
+        getFieldDecorator('ckeys', { initialValue: getArrayfromLength(resourceList) });
         const keys = getFieldValue('keys');
         const formItems = keys.map((k, index) => (
           <Form.Item
@@ -291,6 +292,7 @@ class createStationModal extends Component {
                   message: "请输入文本消息或删除此项",
                 },
               ],
+              initialValue:replyExtendsList[index]
             })(<textarea placeholder="请输入文本消息" style={{ width: '60%', marginRight: 8 }} />)}
             { (
               <Icon
@@ -303,7 +305,7 @@ class createStationModal extends Component {
         ));
 
 
-        getFieldDecorator('ckeys', { initialValue: [] });
+       
         const ckeys = getFieldValue('ckeys');
         const cardFormItems = ckeys.map((k, index) => (
           <Form.Item
@@ -320,6 +322,7 @@ class createStationModal extends Component {
                   message: "请输入资源卡片或删除此项",
                 },
               ],
+              initialValue:resourceList[index]
             })(<Input placeholder="请输入资源卡片" style={{ width: '60%', marginRight: 8 }} />)}
             { (
               <Icon
@@ -385,7 +388,7 @@ class createStationModal extends Component {
         // let userPwdDom = ''; // 用户密码
         // let userStatusDom = ''; // 用户状态
         // let userRoleDom = ''; // 用户角色
-        // let userIdDom = ''; // 用户id
+        let resId = ''; // 用户id
         
         let picWall  = ''; //图片
 
@@ -405,6 +408,11 @@ class createStationModal extends Component {
             initialValue: parseImgListStr(imgList),
             // valuePropName:'filelist'
         })(<PicturesWall />);
+
+
+        resId = getFieldDecorator('id', {
+            initialValue: id,
+        })(<Input type="text" placeholder="资源编号" disabled/>);
 
         if (actiontype === 'create') {
             // stationDom = getFieldDecorator('stationId', {
@@ -503,7 +511,7 @@ class createStationModal extends Component {
                 confirmLoading={false}
                 onCancel={this.onCancel}
                 width="80%"
-                okText="发送"
+                okText="确定"
                 maskClosable={false}
                 destroyOnClose={true}
             >
@@ -515,6 +523,11 @@ class createStationModal extends Component {
                             </Col>
                         </Row>
                     )} */}
+                    <Row type="flex" gutter={16}>
+                        <Col span={24}>
+                            <Form.Item label="工厂编号">{resId}</Form.Item>
+                        </Col>
+                    </Row>
 
                     <Row type="flex" gutter={16}>
                         <Col span={24}>

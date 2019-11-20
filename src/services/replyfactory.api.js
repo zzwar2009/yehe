@@ -43,6 +43,28 @@ export async function createEntity(params) {
     });
 }
 
+export async function updatEntity(params) {
+    const imgList = params.imgList.map(function(item){
+        return item;
+    })
+    const replyExtendsList = params.replyExtendsList.map(function(item){
+        return {
+            content:item
+        };
+    })
+    const resourceList = params.resourceList || [];
+    return request(UrlConfig.new_host, 'chat/updateReply', {
+        method: 'POST',
+        data: {
+            ...params,
+            replyExtendsList,
+            resourceList:JSON.stringify(resourceList),
+            imgList:JSON.stringify(imgList)
+        },
+    });
+}
+
+
 // 修改密码
 export async function changePwd(params) {
     return request(UrlConfig.trans_ip, '/OilUserIUserModifyPassWordForUser', {

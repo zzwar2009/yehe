@@ -1,7 +1,7 @@
 /* eslint-disable */
 import {
     queryWorkers,
-    createEntity,
+    createEntity,updatEntity,
     delEntity,
     changePwd,
     bindStation,
@@ -50,6 +50,18 @@ const Model = {
                         },
                     });
                 }
+            } catch (e) {
+                console.log(e);
+            }
+        },
+
+        *updatEntity({ payload }, { call, put }) {
+            try {
+                debugger
+                const response = yield call(updatEntity, payload);
+                return new Promise(resolve => {
+                    resolve(response);
+                });
             } catch (e) {
                 console.log(e);
             }
@@ -158,7 +170,7 @@ const Model = {
                         type: 'updateModalAfter',
                         payload: {
                             // ...payload,
-                            ...result,
+                            ...entity,
                         },
                     });
                 } else {
@@ -224,10 +236,23 @@ const Model = {
                 replyExtendsList,// 文本消息集合
                 resourceList,// 资源集合
                 id } = payload;
-            debugger
+            
+            let replyExtendsListArr = [];
+            let resourceListArr = [];
+            if(replyExtendsList && Array.isArray(replyExtendsList)){
+                replyExtendsListArr = replyExtendsList.map(function(item){
+                    return item.content;
+                })
+            }
+
+            if(resourceList && resourceList.length>0){
+                resourceListArr = JSON.parse(resourceList)
+            }
+            
             newstate.formdata = {
-                ...payload
-                
+                ...payload,
+                replyExtendsList:replyExtendsListArr,
+                resourceList:resourceListArr
             };
             console.log(newstate);
             return newstate;

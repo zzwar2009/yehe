@@ -43,3 +43,14 @@ export const parseImgListStr = (imgList) => {
 };
 
 
+
+export function getArrayfromLength(arr){
+  let newarr = [];
+  if(Array.isArray(arr)){
+      newarr = arr.map((item,i) => {
+          return i;
+      })
+  }
+  return newarr;
+}
+
