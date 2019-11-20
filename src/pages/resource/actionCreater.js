@@ -12,6 +12,14 @@ export function CreateModal(payload) {
         payload,
     };
 }
+export function updatEntity(payload) {
+    return {
+        type: `${namespace}/updatEntity`,
+        payload,
+    };
+}
+
+
 
 export function updateModal(payload) {
     return {

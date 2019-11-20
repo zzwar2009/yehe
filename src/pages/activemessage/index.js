@@ -51,9 +51,9 @@ function mapDispatchToProps(dispatch) {
 @connect(
     state => {
         return {
-            dataList: state.refuelworker.dataList,
-            pageIndex: state.refuelworker.pageIndex,
-            totalCount: state.refuelworker.totalCount,
+            dataList: state.activemessage.dataList,
+            pageIndex: state.activemessage.pageIndex,
+            totalCount: state.activemessage.totalCount,
             // addOilModalVisible: state.oilstation.addOilModalVisible,
         };
     },

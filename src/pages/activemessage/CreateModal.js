@@ -60,11 +60,11 @@ function mapDispatchToProps(dispatch) {
     };
 }
 @connect(
-    ({ refuelworker }) => {
+    ({ activemessage }) => {
         return {
-            addOilModalVisible: refuelworker.addOilModalVisible,
-            actiontype: refuelworker.actiontype, // 代表是  create还是update
-            data: refuelworker.formdata, // 表单的初始值，更新会回填原来的值
+            addOilModalVisible: activemessage.addOilModalVisible,
+            actiontype: activemessage.actiontype, // 代表是  create还是update
+            data: activemessage.formdata, // 表单的初始值，更新会回填原来的值
         };
     },
     mapDispatchToProps
@@ -94,7 +94,7 @@ class createStationModal extends Component {
             } else {
                 confirm({
                     title: '提示',
-                    content: `是否确定用户信息修改，若用户角色修改，测用户的油站绑定关系全部解除，需要重新绑定油站？`,
+                    content: `确定修改？`,
                     okText: '确定',
                     okType: 'primary',
                     cancelText: '取消',

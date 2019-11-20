@@ -3,7 +3,7 @@ import UrlConfig from '@/config/host.config';
 // 用户关联油站相关
 export async function queryWorkers(params) {
     console.log(params)
-    return request(UrlConfig.new_host,'resource/page', {
+    return request(UrlConfig.new_host,'chat/messagePage', {
         method: 'POST',
         data: {
             current:params.pageIndex,
@@ -14,57 +14,28 @@ export async function queryWorkers(params) {
 
 // 根据id查询用户信息
 export async function queryWorkerById(params) {
-    return request(UrlConfig.new_host, 'resource/details', {
-        method: 'POST',
+    return request(UrlConfig.trans_ip, '/UserGet', {
+        method: 'GET',
         data: params,
     });
 }
 
-// 创建
+// 创建和修改
 export async function createEntity(params) {
-    // const roleId = params.role;
-    // const queryData = {
-    //     roles: [
-    //         {
-    //             id: roleId,
-    //         },
-    //     ],
-    //     ...params,
-    // };
-    const imgList = params.imgList.map(function(item){
-        return item;
-    })
-    return request(UrlConfig.new_host, 'resource/add', {
+    const roleId = params.role;
+    const queryData = {
+        roles: [
+            {
+                id: roleId,
+            },
+        ],
+        ...params,
+    };
+    return request(UrlConfig.trans_ip, '/OilUserOilUsersAddV2', {
         method: 'POST',
-        data: {
-            ...params,
-            imgList:JSON.stringify(imgList),
-        },
+        data: queryData,
     });
 }
-// 修改
-export async function updatEntity(params) {
-    // const roleId = params.role;
-    // const queryData = {
-    //     roles: [
-    //         {
-    //             id: roleId,
-    //         },
-    //     ],
-    //     ...params,
-    // };
-    const imgList = params.imgList.map(function(item){
-        return item;
-    })
-    return request(UrlConfig.new_host, 'resource/update', {
-        method: 'POST',
-        data: {
-            ...params,
-            imgList:JSON.stringify(imgList),
-        },
-    });
-}
-
 
 // 修改密码
 export async function changePwd(params) {

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Input, Modal, DatePicker, Row, Col, Form, message, Select,Upload,Icon } from 'antd';
 import { connect } from 'dva';
 import { bindActionCreator } from '@/utils/bindActionCreators';
-import { queryList, showModal, createEntity, CreateModal, UpdateStation } from './actionCreater';
+import { queryList, showModal, createEntity,updatEntity, CreateModal, UpdateStation } from './actionCreater';
 import { PAGE_SIZE } from './const';
 import RoleSelect from '@/pages/components/RoleSelect';
 import StatusSelect from '@/pages/components/StatusSelect';
@@ -25,44 +25,46 @@ function getBase64(file) {
     });
 }
 
-const fileList = [
-    {
-      uid: '-1',
-      name: 'image.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '-2',
-      name: 'image.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '-3',
-      name: 'image.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '-4',
-      name: 'image.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-    {
-      uid: '-5',
-      name: 'image.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
-  ]
+// const fileList = [
+//     {
+//       uid: '-1',
+//       name: 'image.png',
+//       status: 'done',
+//       url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+//     },
+//     {
+//       uid: '-2',
+//       name: 'image.png',
+//       status: 'done',
+//       url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+//     },
+//     {
+//       uid: '-3',
+//       name: 'image.png',
+//       status: 'done',
+//       url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+//     },
+//     {
+//       uid: '-4',
+//       name: 'image.png',
+//       status: 'done',
+//       url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+//     },
+//     {
+//       uid: '-5',
+//       name: 'image.png',
+//       status: 'done',
+//       url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+//     },
+//   ]
 
 function mapDispatchToProps(dispatch) {
     return {
         queryList: bindActionCreator(queryList, dispatch),
         showModal: bindActionCreator(showModal, dispatch),
         createEntity: bindActionCreator(createEntity, dispatch),
+        updatEntity: bindActionCreator(updatEntity, dispatch),
+        
         CreateModal: bindActionCreator(CreateModal, dispatch),
         UpdateStation: bindActionCreator(UpdateStation, dispatch),
     };
@@ -120,32 +122,37 @@ class createStationModal extends Component {
 
     updateEntity = formData => {
         let that = this;
-        const { createEntity } = this.props;
+        const { updatEntity } = this.props;
 
         const {
-            supplierASCode,
-            supplierASName,
-            nicknamenative,
-            mobile,
-            password,
-            status,
-            role,
+            describes,// 描述
+            extraInformation,// 附属信息
+            fileFormat,// 文件格式
+            id,// 编号
+            code,
+            imgList,// 图片列表
+            name, // 资源名称
+            tag,// 标签
+            type,// 资源类型
+            years // 年代
         } = formData;
         const { userid } = this.props.data;
         let queryData = {
-            role,
-            userid: userid,
-            supplierASCode: supplierASCode,
-            supplierASName: supplierASName,
-            nickNameNative: nicknamenative,
-            loginName: mobile,
-            tel: mobile,
-            status: status,
-            isLogin: 2, // 是否允许登陆：0-不允许；2-允许
+            code,
+            describes,// 描述
+            extraInformation,// 附属信息
+            fileFormat,// 文件格式
+            id,// 编号
+            imgList,// 图片列表
+            name, // 资源名称
+            tag,// 标签
+            type,// 资源类型
+            years // 年代
         };
-        createEntity(queryData).then(res => {
-            const { code } = res;
-            if (code === 200) {
+        debugger
+        updatEntity(queryData).then(res => {
+            const { status } = res;
+            if (status === "OK") {
                 message.success('提交成功');
 
                 //刷新列表
@@ -162,28 +169,30 @@ class createStationModal extends Component {
         let that = this;
         const { createEntity } = this.props;
         const {
-            // supplierASCode,
-            // supplierASName,
-            nicknamenative,
-            mobile,
-            password,
-            status,
-            role,
+            describes,// 描述
+            extraInformation,// 附属信息
+            fileFormat,// 文件格式
+            id,// 编号
+            imgList,// 图片列表
+            name, // 资源名称
+            tag,// 标签
+            type,// 资源类型
+            years // 年代
         } = formData;
+
         let queryData = {
-            // supplierASCode: supplierASCode,
-            // supplierASName: supplierASName,
-            nickNameNative: nicknamenative,
-            loginName: mobile,
-            tel: mobile,
-            passWord: password,
-            status: status,
-            role, // 角色信息
-            isLogin: 2, // 是否允许登陆：0-不允许；2-允许
+            describes,// 描述
+            extraInformation,// 附属信息
+            fileFormat,// 文件格式
+            imgList,// 图片列表
+            name, // 资源名称
+            tag,// 标签
+            type,// 资源类型
+            years // 年代
         };
         createEntity(queryData).then(res => {
-            const { code } = res;
-            if (code === 200) {
+            const { status } = res;
+            if (status === "OK") {
                 message.success('提交成功');
 
                 //刷新列表
@@ -220,18 +229,18 @@ class createStationModal extends Component {
         const { addOilModalVisible, form, actiontype, data } = this.props;
         const { getFieldDecorator } = form;
         const {
-            userobjno, // 油站编号
-            userobjname, // 油站名称
-            mobile, // 手机号
-            nicknamenative, // 用户姓名
-            password, // 登录密码
-            status, // 状态：默认开启
-            station, // 所选油站的相关信息
-            stationId, // 油站编码
-            role,
-            userid, // 用户id
+            describes,// 描述
+            extraInformation,// 附属信息
+            fileFormat,// 文件格式
+            id,// 编号
+            imgList,// 图片列表
+            name, // 资源名称
+            tag,// 标签
+            type,// 资源类型
+            years, // 年代
+            code
         } = data;
-        const { startDT, supplierASCode, supplierASName, regionName } = station;
+        // const { startDT, supplierASCode, supplierASName, regionName } = station;
         // let supplierASCode = 'fdsf'
         // let supplierASName = 'fdsf'
         // let regionName = 'fdsf'
@@ -256,11 +265,11 @@ class createStationModal extends Component {
         //     dateValue = moment(new Date(), dateFormat);
 
         // }else
-        if (startDT && startDT !== '0001-01-01T00:00:00') {
-            dateValue = moment(startDT, dateFormat);
-        } else {
-            dateValue = '';
-        }
+        // if (startDT && startDT !== '0001-01-01T00:00:00') {
+        //     dateValue = moment(startDT, dateFormat);
+        // } else {
+        //     dateValue = '';
+        // }
 
         // let stationDom = ''; // 油站选择
         // let startDTDom = ''; // 合作时间
@@ -282,56 +291,78 @@ class createStationModal extends Component {
         let descDom = '';// 描述
         let tagDom = '';// 标签
         let timeDom = '';// 年代
-
+        let resId = '';
         let picWall  = ''; //图片
-
-        picWall = getFieldDecorator('fileList', {
-            initialValue: fileList,
+        console.log(imgList)
+        console.log(typeof imgList)
+        let imgListArr = [];
+        if(imgList && typeof imgList =='string' && imgList.length>0){
+            imgListArr = JSON.parse(imgList);
+        }
+        
+        picWall = getFieldDecorator('imgList', {
+            initialValue: imgListArr,
             // valuePropName:'filelist'
         })(<PicturesWall />);
 
         // picWall = <PicturesWall />
 
-        resName = getFieldDecorator('nicknamenative', {
+
+
+        // describes,// 描述
+        //     extraInformation,// 附属信息
+        //     fileFormat,// 文件格式
+        //     id,// 编号
+        //     imgList,// 图片列表
+        //     name, // 资源名称
+        //     tag,// 标签
+        //     type,// 资源类型
+        //     years // 年代
+
+
+        resName = getFieldDecorator('name', {
             rules: [{ required: true, message: '请输入资源名称' }],
-            initialValue: nicknamenative,
+            initialValue: name,
         })(<Input type="text" placeholder="请输入资源名称" />);
 
-        resCode = getFieldDecorator('nicknamenative', {
-            rules: [{ required: true, message: '资源编号' }],
-            initialValue: nicknamenative,
-        })(<Input type="text" placeholder="资源编号" />);
+        resCode = getFieldDecorator('code', {
+            initialValue: code,
+        })(<Input type="text" placeholder="资源编号" disabled/>);
 
-        resExtra = getFieldDecorator('nicknamenative', {
+        resId = getFieldDecorator('id', {
+            initialValue: id,
+        })(<Input type="text" placeholder="资源编号" disabled/>);
+
+        resExtra = getFieldDecorator('extraInformation', {
             rules: [{ required: true, message: '附属信息' }],
-            initialValue: nicknamenative,
+            initialValue: extraInformation,
         })(<Input type="text" placeholder="附属信息" />);
 
 
 
-        restypeDom = getFieldDecorator('nicknamenative', {
+        restypeDom = getFieldDecorator('type', {
             rules: [{ required: true, message: '资源类型' }],
-            initialValue: nicknamenative,
+            initialValue: type,
         })(<Input type="text" placeholder="资源类型" />);
 
-        fileFormatDom = getFieldDecorator('nicknamenative', {
+        fileFormatDom = getFieldDecorator('fileFormat', {
             rules: [{ required: true, message: '文件格式' }],
-            initialValue: nicknamenative,
+            initialValue: fileFormat,
         })(<Input type="text" placeholder="文件格式" />);
 
-        descDom = getFieldDecorator('nicknamenative', {
+        descDom = getFieldDecorator('describes', {
             rules: [{ required: true, message: '描述' }],
-            initialValue: nicknamenative,
+            initialValue: describes,
         })(<Input type="text" placeholder="描述" />);
 
-        tagDom = getFieldDecorator('nicknamenative', {
+        tagDom = getFieldDecorator('tag', {
             rules: [{ required: true, message: '标签' }],
-            initialValue: nicknamenative,
+            initialValue: tag,
         })(<Input type="text" placeholder="标签" />);
 
-        timeDom = getFieldDecorator('nicknamenative', {
+        timeDom = getFieldDecorator('years', {
             rules: [{ required: true, message: '年代' }],
-            initialValue: nicknamenative,
+            initialValue: years,
         })(<Input type="text" placeholder="年代" />);
 
 
@@ -350,36 +381,36 @@ class createStationModal extends Component {
             //     initialValue: regionName,
             // })(<Input type="text" placeholder="请输入所属省区" disabled />);
 
-            userNameDom = getFieldDecorator('nicknamenative', {
-                rules: [{ required: true, message: '请输入姓名' }],
-                initialValue: nicknamenative,
-            })(<Input type="text" placeholder="请输入姓名" />);
+            // userNameDom = getFieldDecorator('nicknamenative', {
+            //     rules: [{ required: true, message: '请输入姓名' }],
+            //     initialValue: nicknamenative,
+            // })(<Input type="text" placeholder="请输入姓名" />);
 
-            userMobileDom = getFieldDecorator('mobile', {
-                rules: [
-                    { required: true, message: '请输入手机号码' },
-                    {
-                        // validator: checkField(/^1(3|4|5|7|8)\d{9}$/, '手机号码有误，请重填写'),
-                        validator: checkField(/^1\d{10}$/, '手机号码有误，请重填写'),
-                    },
-                ],
-                initialValue: mobile,
-            })(<Input type="text" placeholder="请输入手机号码" />);
+            // userMobileDom = getFieldDecorator('mobile', {
+            //     rules: [
+            //         { required: true, message: '请输入手机号码' },
+            //         {
+            //             // validator: checkField(/^1(3|4|5|7|8)\d{9}$/, '手机号码有误，请重填写'),
+            //             validator: checkField(/^1\d{10}$/, '手机号码有误，请重填写'),
+            //         },
+            //     ],
+            //     initialValue: mobile,
+            // })(<Input type="text" placeholder="请输入手机号码" />);
 
-            userPwdDom = getFieldDecorator('password', {
-                rules: [{ required: true, message: '请输入登录密码' }],
-                initialValue: password,
-            })(<Input type="text" placeholder="请输入登录密码" />);
+            // userPwdDom = getFieldDecorator('password', {
+            //     rules: [{ required: true, message: '请输入登录密码' }],
+            //     initialValue: password,
+            // })(<Input type="text" placeholder="请输入登录密码" />);
 
-            userStatusDom = getFieldDecorator('status', {
-                rules: [{ required: true, message: '请选择状态' }],
-                initialValue: status,
-            })(<StatusSelect />);
+            // userStatusDom = getFieldDecorator('status', {
+            //     rules: [{ required: true, message: '请选择状态' }],
+            //     initialValue: status,
+            // })(<StatusSelect />);
 
-            userRoleDom = getFieldDecorator('role', {
-                rules: [{ required: true, message: '请选择角色' }],
-                initialValue: role,
-            })(<RoleSelect />);
+            // userRoleDom = getFieldDecorator('role', {
+            //     rules: [{ required: true, message: '请选择角色' }],
+            //     initialValue: role,
+            // })(<RoleSelect />);
         } else if (actiontype === 'update') {
             // stationDom = getFieldDecorator('stationId', {
             //     rules: [{ required: true, message: '请选择油站' }],
@@ -392,37 +423,37 @@ class createStationModal extends Component {
             // regionNameDom = getFieldDecorator('regionName', {
             //     initialValue: regionName,
             // })(<Input type="text" placeholder="请输入所属省区" disabled />);
-            userIdDom = getFieldDecorator('userid', {
-                initialValue: userid,
-            })(<Input type="text" disabled />);
+            // userIdDom = getFieldDecorator('userid', {
+            //     initialValue: userid,
+            // })(<Input type="text" disabled />);
 
-            userNameDom = getFieldDecorator('nicknamenative', {
-                rules: [{ required: true, message: '请输入姓名' }],
-                initialValue: nicknamenative,
-            })(<Input type="text" placeholder="请输入姓名" />);
+            // userNameDom = getFieldDecorator('nicknamenative', {
+            //     rules: [{ required: true, message: '请输入姓名' }],
+            //     initialValue: nicknamenative,
+            // })(<Input type="text" placeholder="请输入姓名" />);
 
-            userMobileDom = getFieldDecorator('mobile', {
-                rules: [
-                    { required: true, message: '请输入手机号码' },
-                    {
-                        // validator: checkField(/^1(3|4|5|7|8)\d{9}$/, '手机号码有误，请重填写'),
-                        validator: checkField(/^1\d{10}$/, '手机号码有误，请重填写'),
-                    },
-                ],
-                initialValue: mobile,
-            })(<Input type="text" placeholder="请输入手机号码" />);
+            // userMobileDom = getFieldDecorator('mobile', {
+            //     rules: [
+            //         { required: true, message: '请输入手机号码' },
+            //         {
+            //             // validator: checkField(/^1(3|4|5|7|8)\d{9}$/, '手机号码有误，请重填写'),
+            //             validator: checkField(/^1\d{10}$/, '手机号码有误，请重填写'),
+            //         },
+            //     ],
+            //     initialValue: mobile,
+            // })(<Input type="text" placeholder="请输入手机号码" />);
 
-            userPwdDom = '';
+            // userPwdDom = '';
 
-            userStatusDom = getFieldDecorator('status', {
-                rules: [{ required: true, message: '请选择状态' }],
-                initialValue: status,
-            })(<StatusSelect />);
+            // userStatusDom = getFieldDecorator('status', {
+            //     rules: [{ required: true, message: '请选择状态' }],
+            //     initialValue: status,
+            // })(<StatusSelect />);
 
-            userRoleDom = getFieldDecorator('role', {
-                rules: [{ required: true, message: '请选择角色' }],
-                initialValue: role,
-            })(<RoleSelect />);
+            // userRoleDom = getFieldDecorator('role', {
+            //     rules: [{ required: true, message: '请选择角色' }],
+            //     initialValue: role,
+            // })(<RoleSelect />);
         }
 
         return (
@@ -441,7 +472,7 @@ class createStationModal extends Component {
                     {actiontype === 'update' && (
                         <Row type="flex" gutter={16}>
                             <Col span={24}>
-                                <Form.Item label="用户编号">{userIdDom}</Form.Item>
+                                <Form.Item label="用户编号">{resId}</Form.Item>
                             </Col>
                         </Row>
                     )}
@@ -452,14 +483,6 @@ class createStationModal extends Component {
                         </Col>
                         <Col span={12}>
                             <Form.Item label="资源编号">{resCode}</Form.Item>
-                        </Col>
-                    </Row>
-                    <Row type="flex" gutter={16}>
-                        <Col span={12}>
-                            <Form.Item label="附属信息">{resExtra}</Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item label="资源类型">{restypeDom}</Form.Item>
                         </Col>
                     </Row>
                     <Row type="flex" gutter={16}>

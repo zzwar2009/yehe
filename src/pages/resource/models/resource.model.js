@@ -10,7 +10,7 @@
 // } from '@/services/refuelworker.api';
 import {
     queryWorkers,
-    createEntity,
+    createEntity,updatEntity,
     delEntity,
     changePwd,
     bindStation,
@@ -29,19 +29,15 @@ const Model = {
         addOilModalVisible: false, // 是否展示新建弹窗
         actiontype: undefined, // 弹窗动作类型
         formdata: {
-            // 新建修改弹窗内表单值
-            userobjno: '', // 油站编号
-            userobjname: '', // 油站名称
-            mobile: '', // 手机号
-            nicknamenative: '', // 用户姓名
-            password: '', // 登录密码
-            status: '3', // 状态：默认开启3,废弃8
-            station: {
-                regionName: '',
-                startDT: null,
-                supplierASCode: '',
-                supplierASName: '',
-            },
+            "describes": "",// 描述
+            "extraInformation": "",// 附属信息
+            "fileFormat": "",// 文件格式
+            "id": null,// 编号
+            "imgList": "",// 图片列表
+            "name": "", // 资源名称
+            "tag": "",// 标签
+            "type": "",// 资源类型
+            "years": "" // 年代
         },
         relatedStationModalVisible: false, // 绑定油站弹窗
         relatedStationFormdata: {
@@ -83,6 +79,18 @@ const Model = {
                 console.log(e);
             }
         },
+
+        *updatEntity({ payload }, { call, put }) {
+            try {
+                const response = yield call(updatEntity, payload);
+                return new Promise(resolve => {
+                    resolve(response);
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        
         *changePwd({ payload }, { call, put }) {
             try {
                 const response = yield call(changePwd, {
@@ -110,12 +118,12 @@ const Model = {
 
         *createModal({ payload }, { call, put }) {
             try {
-                if (payload && payload.supplierASCode) {
+                if (payload && payload.id) {
                     //有油站信息
                     yield put({
                         type: 'createModalForm',
                         payload: {
-                            station: payload,
+                            ...payload,
                         },
                     });
                 } else {
@@ -123,12 +131,15 @@ const Model = {
                     yield put({
                         type: 'createModalForm',
                         payload: {
-                            station: {
-                                regionName: '',
-                                startDT: null,
-                                supplierASCode: '',
-                                supplierASName: '',
-                            },
+                            "describes": "",// 描述
+                            "extraInformation": "",// 附属信息
+                            "fileFormat": "",// 文件格式
+                            "id": '',// 编号
+                            "imgList": [],// 图片列表
+                            "name": "", // 资源名称
+                            "tag": "",// 标签
+                            "type": "",// 资源类型
+                            "years": "" // 年代
                         },
                     });
                 }
@@ -166,17 +177,29 @@ const Model = {
 
         *updateModal({ payload }, { call, put }) {
             try {
-                const { userobjname, userobjno, userid } = payload;
+                const { clickNum,
+                    code,
+                    createTime,
+                    describes,
+                    extraInformation,
+                    fileFormat,
+                    id,
+                    imgList,
+                    key,
+                    name,
+                    tag,
+                    type,
+                    years } = payload;
                 const response = yield call(queryWorkerById, {
-                    userId: userid,
+                    id: id,
                 });
-                const { code, result } = response;
-                if (code === 200 && result) {
+                const { status, entity } = response;
+                if (status === "OK" && entity) {
                     yield put({
                         type: 'updateModalAfter',
                         payload: {
                             // ...payload,
-                            ...result,
+                            ...entity,
                         },
                     });
                 } else {
@@ -224,13 +247,6 @@ const Model = {
             newstate.addOilModalVisible = true;
             newstate.actiontype = 'create';
             newstate.formdata = {
-                role: '0', // 默认请选择
-                userobjno: '', // 油站编号
-                userobjname: '', // 油站名称
-                mobile: '', // 手机号
-                nicknamenative: '', // 用户姓名
-                password: '', // 登录密码
-                status: '3', // 状态：默认开启3,废弃8
                 ...payload, //油站信息
             };
             return newstate;
@@ -239,23 +255,24 @@ const Model = {
         updateModalAfter(state, { payload }) {
             let newstate = Object.assign({}, state);
             newstate.addOilModalVisible = true;
+            
             newstate.actiontype = 'update';
-            const { regionName, startDT, supplierASCode, supplierASName, userobjno } = payload;
-            let role = '';
-            if (payload.platRoleInfos && payload.platRoleInfos.length > 0) {
-                role = payload.platRoleInfos[0].roleId;
-            }
+            const { clickNum,
+                code,
+                createTime,
+                describes,
+                extraInformation,
+                fileFormat,
+                id,
+                imgList,
+                key,
+                name,
+                tag,
+                type,
+                years  } = payload;
+            
             newstate.formdata = {
                 ...payload,
-                role,
-                stationId: userobjno,
-                status: String(payload.status),
-                station: {
-                    regionName,
-                    startDT,
-                    supplierASCode,
-                    supplierASName,
-                },
             };
             console.log(newstate);
             return newstate;

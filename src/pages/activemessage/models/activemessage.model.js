@@ -7,10 +7,10 @@ import {
     bindStation,
     unBindStation,
     queryWorkerById,
-} from '@/services/refuelworker.api';
+} from '@/services/activemessage.api';
 import { queryStations } from '@/services/station.api';
 const Model = {
-    namespace: 'refuelworker',
+    namespace: 'activemessage',
     state: {
         currentPage: 1,
         dataList: [], // 数据

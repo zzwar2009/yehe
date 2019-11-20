@@ -1,5 +1,5 @@
 import { Upload, Icon, Modal } from 'antd';
-
+import UrlConfig from '@/config/host.config';
 function getBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -41,15 +41,55 @@ class PicturesWall extends React.Component {
   // handleChange = ({ fileList }) => this.setState({ value:fileList });
 
   handleChange = (obj) => {
-    this.setState({ fileList })
-    const {fileList,file} = obj;
-    console.log(obj)
+    
+    const {fileList,file,event} = obj;
+    let {value} = this.state;
+    // console.log(obj)
+
+    // if(file && file.response){
+    //   const {status,entity} = file.response;
+    //   if(status == 'OK'){
+    //     file.url = file.entity;
+    //     const {name,status,url,uid} = file;
+    //     // value.push({
+    //     //   name,
+    //     //   status,
+    //     //   uid,
+    //     //   url,
+    //     // })
+        
+    //   }
+    // }
+
+    // const {fiole}
+    // this.setState({ fileList })
     // debugger
     // console.log(fileList)
     const { onChange } = this.props;
-        if (onChange) {
-            onChange(fileList);
+    // if (onChange) {
+    //     onChange(value);
+    // }
+    // this.setState({ fileList })
+    // this.setState({ fileList })
+    if (onChange) {
+      let filedatas  = fileList.map(function(item){
+        let {uid,name,status,response,url=""} = item;
+        if(response){
+          const {status,entity} = response;
+          if(status == 'OK'){
+            url = entity;
+          }
         }
+        
+        return {
+          name,
+          status,
+          uid,
+          url,
+        }
+      })
+      onChange(filedatas);
+    }
   };
 
   render() {
@@ -60,10 +100,11 @@ class PicturesWall extends React.Component {
         <div className="ant-upload-text">Upload</div>
       </div>
     );
+    const uploadurl = `${UrlConfig.new_host}image/uploadImg`
     return (
       <div className="clearfix">
         <Upload
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          action={uploadurl}
           listType="picture-card"
           fileList={value}
           onPreview={this.handlePreview}
