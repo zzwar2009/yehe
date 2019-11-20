@@ -52,6 +52,13 @@ export function createEntity(payload) {
         payload,
     };
 }
+export function updatEntity(payload) {
+    return {
+        type: `${namespace}/updatEntity`,
+        payload,
+    };
+}
+
 export function changePwd(payload) {
     return {
         type: `${namespace}/changePwd`,

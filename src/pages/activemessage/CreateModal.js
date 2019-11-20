@@ -3,21 +3,22 @@ import React, { Component } from 'react';
 import { Input, Modal, DatePicker, Row, Col, Form, message, Select,Icon,Button  } from 'antd';
 import { connect } from 'dva';
 import { bindActionCreator } from '@/utils/bindActionCreators';
-import { queryList, showModal, createEntity, CreateModal, UpdateStation } from './actionCreater';
+import { queryList, showModal, createEntity, CreateModal, UpdateStation ,updatEntity} from './actionCreater';
 import { PAGE_SIZE } from './const';
 import RoleSelect from '@/pages/components/RoleSelect';
 import StatusSelect from '@/pages/components/StatusSelect';
 import PicturesWall from '@/pages/components/PicturesWall/index';
 import moment from 'moment';
 import { formatToUTC, checkField } from '@/utils/utils';
+import { parseImgListStr,getArrayfromLength } from '@/utils/utils';
 
 
 const dateFormat = 'YYYY-MM-DD';
 const Option = Select.Option;
 const { confirm } = Modal;
 // import styles from './OilStation.css';
-let id = 0;
-let cid = 0;
+// let id = 0;
+// let cid = 0;
 const fileList = [
     {
         uid: '-1',
@@ -55,10 +56,13 @@ function mapDispatchToProps(dispatch) {
         queryList: bindActionCreator(queryList, dispatch),
         showModal: bindActionCreator(showModal, dispatch),
         createEntity: bindActionCreator(createEntity, dispatch),
+        updateEntity: bindActionCreator(updatEntity, dispatch),
+
         CreateModal: bindActionCreator(CreateModal, dispatch),
         UpdateStation: bindActionCreator(UpdateStation, dispatch),
     };
 }
+
 @connect(
     ({ activemessage }) => {
         return {
@@ -80,6 +84,8 @@ class createStationModal extends Component {
     componentDidMount() {}
 
     onOk = () => {
+
+        // e.preventDefault();
         const { addOilModalVisible, form, actiontype, data } = this.props;
         let that = this;
         const { getFieldsValue, validateFields, getFieldError } = form;
@@ -88,55 +94,53 @@ class createStationModal extends Component {
                 return;
             }
 
+            const { keys, replyExtendsList, resourceList,ckeys} = values;
+            console.log('Received values of form: ', values);
+            console.log('Merged values:', keys.map(key => replyExtendsList[key]));
+            console.log('Merged card values :', ckeys.map(key => resourceList[key]));
+
             // console.log(newvalues);
             if (actiontype === 'create') {
                 that.createEntityBefore(values);
             } else {
-                confirm({
-                    title: '提示',
-                    content: `确定修改？`,
-                    okText: '确定',
-                    okType: 'primary',
-                    cancelText: '取消',
-                    onOk() {
-                        that.updateEntity(values);
-                    },
-                    onCancel() {
-                        console.log('Cancel');
-                    },
-                });
+                // confirm({
+                //     title: '提示',
+                //     content: `确定修改？`,
+                //     okText: '确定',
+                //     okType: 'primary',
+                //     cancelText: '取消',
+                //     onOk() {
+                        
+                //     },
+                //     onCancel() {
+                //         console.log('Cancel');
+                //     },
+                // });
+                that.updateEntity(values);
             }
         });
     };
 
     updateEntity = formData => {
         let that = this;
-        const { createEntity } = this.props;
-
+        const { updateEntity } = this.props;
         const {
-            supplierASCode,
-            supplierASName,
-            nicknamenative,
-            mobile,
-            password,
-            status,
-            role,
+            id,
+            imgList,// 图片列表
+            name, // 意图名称
+            replyExtendsList,// 文本消息集合
+            resourceList// 资源集合
         } = formData;
-        const { userid } = this.props.data;
         let queryData = {
-            role,
-            userid: userid,
-            supplierASCode: supplierASCode,
-            supplierASName: supplierASName,
-            nickNameNative: nicknamenative,
-            loginName: mobile,
-            tel: mobile,
-            status: status,
-            isLogin: 2, // 是否允许登陆：0-不允许；2-允许
+            id,
+            imgList,// 图片列表
+            name, // 意图名称
+            replyExtendsList,// 文本消息集合
+            resourceList// 资源集合
         };
-        createEntity(queryData).then(res => {
-            const { code } = res;
-            if (code === 200) {
+        updateEntity(queryData).then(res => {
+            const { status } = res;
+            if (status === "OK") {
                 message.success('提交成功');
 
                 //刷新列表
@@ -153,28 +157,20 @@ class createStationModal extends Component {
         let that = this;
         const { createEntity } = this.props;
         const {
-            // supplierASCode,
-            // supplierASName,
-            nicknamenative,
-            mobile,
-            password,
-            status,
-            role,
+            imgList,// 图片列表
+            name, // 意图名称
+            replyExtendsList,// 文本消息集合
+            resourceList// 资源集合
         } = formData;
         let queryData = {
-            // supplierASCode: supplierASCode,
-            // supplierASName: supplierASName,
-            nickNameNative: nicknamenative,
-            loginName: mobile,
-            tel: mobile,
-            passWord: password,
-            status: status,
-            role, // 角色信息
-            isLogin: 2, // 是否允许登陆：0-不允许；2-允许
+            imgList,// 图片列表
+            name, // 意图名称
+            replyExtendsList,// 文本消息集合
+            resourceList// 资源集合
         };
         createEntity(queryData).then(res => {
-            const { code } = res;
-            if (code === 200) {
+            const { status } = res;
+            if (status === "OK") {
                 message.success('提交成功');
 
                 //刷新列表
@@ -212,9 +208,9 @@ class createStationModal extends Component {
         // can use data-binding to get
         const keys = form.getFieldValue('keys');
         // We need at least one passenger
-        if (keys.length === 1) {
-            return;
-        }
+        // if (keys.length === 1) {
+        //     return;
+        // }
 
         // can use data-binding to set
         form.setFieldsValue({
@@ -226,7 +222,7 @@ class createStationModal extends Component {
         const { form } = this.props;
         // can use data-binding to get
         const keys = form.getFieldValue('keys');
-        const nextKeys = keys.concat(id++);
+        const nextKeys = keys.concat(keys.length);
         // can use data-binding to set
         // important! notify form to detect changes
         form.setFieldsValue({
@@ -239,9 +235,9 @@ class createStationModal extends Component {
         // can use data-binding to get
         const keys = form.getFieldValue('ckeys');
         // We need at least one passenger
-        if (keys.length === 1) {
-            return;
-        }
+        // if (keys.length === 1) {
+        //     return;
+        // }
 
         // can use data-binding to set
         form.setFieldsValue({
@@ -253,7 +249,7 @@ class createStationModal extends Component {
         const { form } = this.props;
         // can use data-binding to get
         const keys = form.getFieldValue('ckeys');
-        const nextKeys = keys.concat(cid++);
+        const nextKeys = keys.concat(keys.length);
         // can use data-binding to set
         // important! notify form to detect changes
         form.setFieldsValue({
@@ -261,114 +257,99 @@ class createStationModal extends Component {
         });
     };
 
-    
-
-    handleSubmit = e => {
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-            const { keys, names, cnames,ckeys} = values;
-            console.log('Received values of form: ', values);
-            console.log('Merged values:', keys.map(key => names[key]));
-            // console.log('Merged card values :', ckeys.map(key => cnames[key]));
-            }
-        });
-    };
-
     render() {
 
-        const { getFieldDecorator, getFieldValue } = this.props.form;
-        const formItemLayout = {
-          labelCol: {
-            xs: { span: 24 },
-            sm: { span: 4 },
-          },
-          wrapperCol: {
-            xs: { span: 24 },
-            sm: { span: 20 },
-          },
-        };
-        const formItemLayoutWithOutLabel = {
-          wrapperCol: {
-            xs: { span: 24, offset: 0 },
-            sm: { span: 20, offset: 4 },
-          },
-        };
-        getFieldDecorator('keys', { initialValue: [] });
+        // const { getFieldDecorator, getFieldValue } = this.props.form;
+        const { addOilModalVisible, form, actiontype, data } = this.props;
+        const { getFieldDecorator ,getFieldValue} = form;
+        const {
+            id,
+            imgList,// 图片列表
+            name, // 意图名称
+            replyExtendsList,// 文本消息集合
+            resourceList// 资源集合
+        } = data;
+        // replyExtendsList
+        // const replyExtendsList= messageExtendsList;
+        // replyExtendsList.map((item,i) => {
+        //     return i;
+        // })
+        getFieldDecorator('keys', { initialValue: getArrayfromLength(replyExtendsList) });
+        getFieldDecorator('ckeys', { initialValue: getArrayfromLength(resourceList) });
         const keys = getFieldValue('keys');
         const formItems = keys.map((k, index) => (
           <Form.Item
-            // {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
             label={index === 0 ? '文本消息' : ''}
             required={false}
             key={k}
           >
-            {getFieldDecorator(`names[${k}]`, {
+            {getFieldDecorator(`replyExtendsList[${k}]`, {
               validateTrigger: ['onChange', 'onBlur'],
               rules: [
                 {
                   required: true,
                   whitespace: true,
-                  message: "Please input passenger's name or delete this field.",
+                  message: "请输入文本消息或删除此项",
                 },
               ],
-            })(<textarea placeholder="passenger name" style={{ width: '60%', marginRight: 8 }} />)}
-            {keys.length > 1 ? (
+              initialValue:replyExtendsList[index]
+            })(<textarea placeholder="请输入文本消息" style={{ width: '60%', marginRight: 8 }} />)}
+            { (
               <Icon
                 className="dynamic-delete-button"
                 type="minus-circle-o"
                 onClick={() => this.remove(k)}
               />
-            ) : null}
+            )}
           </Form.Item>
         ));
 
 
-        getFieldDecorator('ckeys', { initialValue: [] });
+       
         const ckeys = getFieldValue('ckeys');
         const cardFormItems = ckeys.map((k, index) => (
           <Form.Item
-            // {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
             label={index === 0 ? '资源卡片' : ''}
             required={false}
             key={k}
           >
-            {getFieldDecorator(`cnames[${k}]`, {
+            {getFieldDecorator(`resourceList[${k}]`, {
               validateTrigger: ['onChange', 'onBlur'],
               rules: [
                 {
                   required: true,
                   whitespace: true,
-                  message: "Please input passenger's name or delete this field.",
+                  message: "请输入资源卡片或删除此项",
                 },
               ],
-            })(<Input placeholder="passenger name" style={{ width: '60%', marginRight: 8 }} />)}
-            {keys.length > 1 ? (
+              initialValue:resourceList[index]
+            })(<Input placeholder="请输入资源卡片" style={{ width: '60%', marginRight: 8 }} />)}
+            { (
               <Icon
                 className="dynamic-delete-button"
                 type="minus-circle-o"
                 onClick={() => this.removeCard(k)}
               />
-            ) : null}
+            )}
           </Form.Item>
         ));
 
 
-        const { addOilModalVisible, form, actiontype, data } = this.props;
+        // const { addOilModalVisible, form, actiontype, data } = this.props;
         // const { getFieldDecorator } = form;
-        const {
-            userobjno, // 油站编号
-            userobjname, // 油站名称
-            mobile, // 手机号
-            nicknamenative, // 用户姓名
-            password, // 登录密码
-            status, // 状态：默认开启
-            station, // 所选油站的相关信息
-            stationId, // 油站编码
-            role,
-            userid, // 用户id
-        } = data;
-        const { startDT, supplierASCode, supplierASName, regionName } = station;
+        // const {
+        //     userobjno, // 油站编号
+        //     userobjname, // 油站名称
+        //     mobile, // 手机号
+        //     nicknamenative, // 用户姓名
+        //     password, // 登录密码
+        //     status, // 状态：默认开启
+        //     station, // 所选油站的相关信息
+        //     stationId, // 油站编码
+        //     role,
+        //     userid, // 用户id
+        // } = data;
+        // const { startDT, supplierASCode, supplierASName, regionName } = station;
         // let supplierASCode = 'fdsf'
         // let supplierASName = 'fdsf'
         // let regionName = 'fdsf'
@@ -387,17 +368,17 @@ class createStationModal extends Component {
             create: '配置回复',
         };
         //moment类型
-        let dateValue = null;
+        // let dateValue = null;
 
         // if (actiontype === 'create') {
         //     dateValue = moment(new Date(), dateFormat);
 
         // }else
-        if (startDT && startDT !== '0001-01-01T00:00:00') {
-            dateValue = moment(startDT, dateFormat);
-        } else {
-            dateValue = '';
-        }
+        // if (startDT && startDT !== '0001-01-01T00:00:00') {
+        //     dateValue = moment(startDT, dateFormat);
+        // } else {
+        //     dateValue = '';
+        // }
 
         // let stationDom = ''; // 油站选择
         // let startDTDom = ''; // 合作时间
@@ -407,14 +388,31 @@ class createStationModal extends Component {
         // let userPwdDom = ''; // 用户密码
         // let userStatusDom = ''; // 用户状态
         // let userRoleDom = ''; // 用户角色
-        let userIdDom = ''; // 用户id
+        let resId = ''; // 用户id
         
         let picWall  = ''; //图片
 
-        picWall = getFieldDecorator('fileList', {
-            initialValue: fileList,
+        // let nameDom = '' // 意图名称
+
+        // nameDom = getFieldDecorator('name', {
+        //     rules: [{ required: true, message: '请输入意图' }],
+        //     initialValue: name,
+        // })(<Input type="text" />);
+
+        // picWall = getFieldDecorator('fileList', {
+        //     initialValue: fileList,
+        //     // valuePropName:'filelist'
+        // })(<PicturesWall />);
+
+        picWall = getFieldDecorator('imgList', {
+            initialValue: parseImgListStr(imgList),
             // valuePropName:'filelist'
         })(<PicturesWall />);
+
+
+        resId = getFieldDecorator('id', {
+            initialValue: id,
+        })(<Input type="text" placeholder="资源编号" disabled/>);
 
         if (actiontype === 'create') {
             // stationDom = getFieldDecorator('stationId', {
@@ -472,9 +470,9 @@ class createStationModal extends Component {
             // regionNameDom = getFieldDecorator('regionName', {
             //     initialValue: regionName,
             // })(<Input type="text" placeholder="请输入所属省区" disabled />);
-            userIdDom = getFieldDecorator('userid', {
-                initialValue: userid,
-            })(<Input type="text" disabled />);
+            // userIdDom = getFieldDecorator('userid', {
+            //     initialValue: userid,
+            // })(<Input type="text" disabled />);
 
             // userNameDom = getFieldDecorator('nicknamenative', {
             //     rules: [{ required: true, message: '请输入姓名' }],
@@ -509,28 +507,38 @@ class createStationModal extends Component {
             <Modal
                 title={titleObj[actiontype]}
                 visible={addOilModalVisible}
-                onOk={this.handleSubmit}
+                onOk={this.onOk}
                 confirmLoading={false}
                 onCancel={this.onCancel}
                 width="80%"
-                okText="发送"
+                okText="确定"
                 maskClosable={false}
                 destroyOnClose={true}
             >
                 <Form>
-                    {actiontype === 'update' && (
+                    {/* {actiontype === 'update' && (
                         <Row type="flex" gutter={16}>
                             <Col span={24}>
                                 <Form.Item label="用户编号">{userIdDom}</Form.Item>
                             </Col>
                         </Row>
-                    )}
-                    
+                    )} */}
+                    <Row type="flex" gutter={16}>
+                        <Col span={24}>
+                            <Form.Item label="编号">{resId}</Form.Item>
+                        </Col>
+                    </Row>
+
+                    {/* <Row type="flex" gutter={16}>
+                        <Col span={24}>
+                            <Form.Item label="意图名称">{nameDom}</Form.Item>
+                        </Col>
+                    </Row> */}
                     <Row type="flex" gutter={16}>
                         <Col span={24}>
                             <Form.Item >
                                 <Button type="dashed" onClick={this.add} style={{ width: '60%' }}>
-                                    <Icon type="plus" /> Add field
+                                    <Icon type="plus" /> 添加文本消息
                                 </Button>
                             </Form.Item>
                         </Col>
@@ -549,7 +557,7 @@ class createStationModal extends Component {
                         <Col span={24}>
                             <Form.Item>
                                 <Button type="dashed" onClick={this.addCard} style={{ width: '60%' }}>
-                                    <Icon type="plus" /> Add field
+                                    <Icon type="plus" /> 添加资源卡片
                                 </Button>
                             </Form.Item>
                         </Col>

@@ -14,28 +14,56 @@ export async function queryWorkers(params) {
 
 // 根据id查询用户信息
 export async function queryWorkerById(params) {
-    return request(UrlConfig.trans_ip, '/UserGet', {
-        method: 'GET',
+    return request(UrlConfig.new_host, 'chat/messageDetails', {
+        method: 'POST',
         data: params,
     });
 }
 
-// 创建和修改
+// 创建
 export async function createEntity(params) {
-    const roleId = params.role;
-    const queryData = {
-        roles: [
-            {
-                id: roleId,
-            },
-        ],
-        ...params,
-    };
-    return request(UrlConfig.trans_ip, '/OilUserOilUsersAddV2', {
+    console.log(params);
+    const imgList = params.imgList.map(function(item){
+        return item;
+    })
+    const replyExtendsList = params.replyExtendsList.map(function(item){
+        return {
+            content:item
+        };
+    })
+    const resourceList = params.resourceList || [];
+    return request(UrlConfig.new_host, 'chat/messageAdd', {
         method: 'POST',
-        data: queryData,
+        data: {
+            ...params,
+            messageExtendsList:replyExtendsList,
+            resourceList:JSON.stringify(resourceList),
+            imgList:JSON.stringify(imgList)
+        },
     });
 }
+
+export async function updatEntity(params) {
+    const imgList = params.imgList.map(function(item){
+        return item;
+    })
+    const replyExtendsList = params.replyExtendsList.map(function(item){
+        return {
+            content:item
+        };
+    })
+    const resourceList = params.resourceList || [];
+    return request(UrlConfig.new_host, 'chat/messageUpdate', {
+        method: 'POST',
+        data: {
+            ...params,
+            messageExtendsList:replyExtendsList,
+            resourceList:JSON.stringify(resourceList),
+            imgList:JSON.stringify(imgList)
+        },
+    });
+}
+
 
 // 修改密码
 export async function changePwd(params) {
@@ -47,9 +75,9 @@ export async function changePwd(params) {
 
 // 删除油站
 export async function delEntity(params) {
-    return request(UrlConfig.trans_ip, '/OilUserOilUsersDelete', {
-        method: 'DELETE',
-        data: params,
+    return request(UrlConfig.new_host, 'chat/messageRemove', {
+        method: 'POST',
+        data: {idsList:[params.id]},
     });
 }
 

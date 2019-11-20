@@ -1,7 +1,7 @@
 /* eslint-disable */
 import {
     queryWorkers,
-    createEntity,
+    createEntity,updatEntity,
     delEntity,
     changePwd,
     bindStation,
@@ -20,19 +20,11 @@ const Model = {
         addOilModalVisible: false, // 是否展示新建弹窗
         actiontype: undefined, // 弹窗动作类型
         formdata: {
-            // 新建修改弹窗内表单值
-            userobjno: '', // 油站编号
-            userobjname: '', // 油站名称
-            mobile: '', // 手机号
-            nicknamenative: '', // 用户姓名
-            password: '', // 登录密码
-            status: '3', // 状态：默认开启3,废弃8
-            station: {
-                regionName: '',
-                startDT: null,
-                supplierASCode: '',
-                supplierASName: '',
-            },
+            imgList:[],// 图片列表
+            name:"", // 意图名称
+            replyExtendsList:[],// 文本消息集合
+            resourceList:[],// 资源集合
+            id:'',
         },
         relatedStationModalVisible: false, // 绑定油站弹窗
         relatedStationFormdata: {
@@ -47,17 +39,28 @@ const Model = {
         *queryList({ payload }, { call, put }) {
             try {
                 const response = yield call(queryWorkers, payload);
-                const { result, code, totalCount } = response;
-                if (code === 200) {
+                const { status, entities,total } = response;
+                if (status === 'OK') {
                     yield put({
                         type: 'updateList',
                         payload: {
-                            result,
-                            totalCount,
-                            pageIndex: payload.pageIndex,
+                            result:entities,
+                            totalCount:total,
+                            pageIndex: payload.current,
                         },
                     });
                 }
+            } catch (e) {
+                console.log(e);
+            }
+        },
+
+        *updatEntity({ payload }, { call, put }) {
+            try {
+                const response = yield call(updatEntity, payload);
+                return new Promise(resolve => {
+                    resolve(response);
+                });
             } catch (e) {
                 console.log(e);
             }
@@ -89,7 +92,7 @@ const Model = {
 
         *delEntity({ payload }, { call, put }) {
             try {
-                const response = yield call(delEntity, { userId: payload });
+                const response = yield call(delEntity, { id: payload });
                 return new Promise(resolve => {
                     resolve(response);
                 });
@@ -100,12 +103,12 @@ const Model = {
 
         *createModal({ payload }, { call, put }) {
             try {
-                if (payload && payload.supplierASCode) {
+                if (payload && payload.id) {
                     //有油站信息
                     yield put({
                         type: 'createModalForm',
                         payload: {
-                            station: payload,
+                            ...payload,
                         },
                     });
                 } else {
@@ -113,12 +116,7 @@ const Model = {
                     yield put({
                         type: 'createModalForm',
                         payload: {
-                            station: {
-                                regionName: '',
-                                startDT: null,
-                                supplierASCode: '',
-                                supplierASName: '',
-                            },
+                            ...payload
                         },
                     });
                 }
@@ -156,17 +154,22 @@ const Model = {
 
         *updateModal({ payload }, { call, put }) {
             try {
-                const { userobjname, userobjno, userid } = payload;
+                const { 
+                    imgList,// 图片列表
+                    name, // 意图名称
+                    replyExtendsList,// 文本消息集合
+                    resourceList,// 资源集合
+                    id} = payload;
                 const response = yield call(queryWorkerById, {
-                    userId: userid,
+                    id: id,
                 });
-                const { code, result } = response;
-                if (code === 200 && result) {
+                const { status, entity } = response;
+                if (status === "OK" && entity) {
                     yield put({
                         type: 'updateModalAfter',
                         payload: {
                             // ...payload,
-                            ...result,
+                            ...entity,
                         },
                     });
                 } else {
@@ -214,14 +217,11 @@ const Model = {
             newstate.addOilModalVisible = true;
             newstate.actiontype = 'create';
             newstate.formdata = {
-                role: '0', // 默认请选择
-                userobjno: '', // 油站编号
-                userobjname: '', // 油站名称
-                mobile: '', // 手机号
-                nicknamenative: '', // 用户姓名
-                password: '', // 登录密码
-                status: '3', // 状态：默认开启3,废弃8
-                ...payload, //油站信息
+                imgList:[],// 图片列表
+                name:"", // 意图名称
+                replyExtendsList:[],// 文本消息集合
+                resourceList:'',// 资源集合
+                id:'',
             };
             return newstate;
         },
@@ -230,22 +230,28 @@ const Model = {
             let newstate = Object.assign({}, state);
             newstate.addOilModalVisible = true;
             newstate.actiontype = 'update';
-            const { regionName, startDT, supplierASCode, supplierASName, userobjno } = payload;
-            let role = '';
-            if (payload.platRoleInfos && payload.platRoleInfos.length > 0) {
-                role = payload.platRoleInfos[0].roleId;
+            const { imgList,// 图片列表
+                name, // 意图名称
+                messageExtendsList,// 文本消息集合
+                resourceList,// 资源集合
+                id } = payload;
+            
+            let replyExtendsListArr = [];
+            let resourceListArr = [];
+            if(messageExtendsList && Array.isArray(messageExtendsList)){
+                replyExtendsListArr = messageExtendsList.map(function(item){
+                    return item.content;
+                })
             }
+
+            if(resourceList && resourceList.length>0){
+                resourceListArr = JSON.parse(resourceList)
+            }
+            
             newstate.formdata = {
                 ...payload,
-                role,
-                stationId: userobjno,
-                status: String(payload.status),
-                station: {
-                    regionName,
-                    startDT,
-                    supplierASCode,
-                    supplierASName,
-                },
+                replyExtendsList:replyExtendsListArr,
+                resourceList:resourceListArr
             };
             console.log(newstate);
             return newstate;

@@ -73,22 +73,22 @@ class OilPerson extends Component {
             // },
             {
                 title: '编号',
-                dataIndex: 'userid',
-                key: 'userid',
+                dataIndex: 'id',
+                key: 'id',
                 align: 'center',
                 width: 100,
             },
             // {
             //     title: '意图名称',
-            //     dataIndex: 'nicknamenative',
-            //     key: 'nicknamenative',
+            //     dataIndex: 'name',
+            //     key: 'name',
             //     align: 'center',
             //     width: 100,
             // },
             {
                 title: '发送时间',
-                dataIndex: 'enterTime',
-                key: 'enterTime',
+                dataIndex: 'createTime',
+                key: 'createTime',
                 align: 'center',
                 width: 150,
                 render: (text, record, index) => {
@@ -106,7 +106,7 @@ class OilPerson extends Component {
                 render: (text, record, index) => (
                     <div>
                         <Button type="primary" onClick={() => this.showChangeEntityModal(record)}>
-                            查看
+                            修改信息
                         </Button>
                         <Button
                             style={{ marginLeft: 10 }}
@@ -246,17 +246,17 @@ class OilPerson extends Component {
     DeleteEntity = record => {
         let that = this;
         confirm({
-            title: '删除用户',
-            content: `确定删除用户${record.nicknamenative} ？`,
+            title: '删除',
+            content: `确定删除'${record.name}' ？`,
             okText: '确定',
             okType: 'danger',
             cancelText: '取消',
             onOk() {
                 // 删除油站
                 const { delEntity } = that.props;
-                delEntity(record.userid).then(res => {
-                    const { code } = res;
-                    if (code === 200) {
+                delEntity(record.id).then(res => {
+                    const { status } = res;
+                    if (status === "OK") {
                         message.success('删除成功');
                         // 刷新列表
                         that.refreshList();

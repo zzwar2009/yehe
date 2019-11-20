@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { queryStations, createStation, delStation, genStationCid } from '@/services/userrs.api';
 const Model = {
-    namespace: 'userrsfdsf',
+    namespace: 'userrsssshh===',
     state: {
         dataList: [
             // {
