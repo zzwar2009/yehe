@@ -231,6 +231,7 @@ class createStationModal extends Component {
         const { addOilModalVisible, form, actiontype, data } = this.props;
         const { getFieldDecorator } = form;
         const {
+            clickNum,
             describes,// 描述
             extraInformation,// 附属信息
             fileFormat,// 文件格式
@@ -523,7 +524,7 @@ class createStationModal extends Component {
                     </Row>
                     <Row type="flex" gutter={16}>
                         <Col span={12}>
-                            <Form.Item label="点击量"><span>{123456}</span></Form.Item>
+                            <Form.Item label="点击量"><span>{clickNum}</span></Form.Item>
                         </Col>
                         
                     </Row>

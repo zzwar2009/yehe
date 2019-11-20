@@ -29,6 +29,7 @@ const Model = {
         addOilModalVisible: false, // 是否展示新建弹窗
         actiontype: undefined, // 弹窗动作类型
         formdata: {
+            "clickNum":0,// 点击量
             "describes": "",// 描述
             "extraInformation": "",// 附属信息
             "fileFormat": "",// 文件格式
@@ -131,6 +132,7 @@ const Model = {
                     yield put({
                         type: 'createModalForm',
                         payload: {
+                            "clickNum":0,
                             "describes": "",// 描述
                             "extraInformation": "",// 附属信息
                             "fileFormat": "",// 文件格式
@@ -140,6 +142,7 @@ const Model = {
                             "tag": "",// 标签
                             "type": "",// 资源类型
                             "years": "" // 年代
+                            
                         },
                     });
                 }
