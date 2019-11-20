@@ -73,22 +73,22 @@ class OilPerson extends Component {
             // },
             {
                 title: '配置编号',
-                dataIndex: 'userid',
-                key: 'userid',
+                dataIndex: 'id',
+                key: 'id',
                 align: 'center',
                 width: 100,
             },
             {
                 title: '意图名称',
-                dataIndex: 'nicknamenative',
-                key: 'nicknamenative',
+                dataIndex: 'name',
+                key: 'name',
                 align: 'center',
                 width: 100,
             },
             {
                 title: '应用时间',
-                dataIndex: 'enterTime',
-                key: 'enterTime',
+                dataIndex: 'createTime',
+                key: 'createTime',
                 align: 'center',
                 width: 150,
                 render: (text, record, index) => {

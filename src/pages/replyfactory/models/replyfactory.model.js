@@ -20,19 +20,11 @@ const Model = {
         addOilModalVisible: false, // 是否展示新建弹窗
         actiontype: undefined, // 弹窗动作类型
         formdata: {
-            // 新建修改弹窗内表单值
-            userobjno: '', // 油站编号
-            userobjname: '', // 油站名称
-            mobile: '', // 手机号
-            nicknamenative: '', // 用户姓名
-            password: '', // 登录密码
-            status: '3', // 状态：默认开启3,废弃8
-            station: {
-                regionName: '',
-                startDT: null,
-                supplierASCode: '',
-                supplierASName: '',
-            },
+            imgList:[],// 图片列表
+            name:"", // 意图名称
+            replyExtendsList:[],// 文本消息集合
+            resourceList:[],// 资源集合
+            id:'',
         },
         relatedStationModalVisible: false, // 绑定油站弹窗
         relatedStationFormdata: {
@@ -100,12 +92,12 @@ const Model = {
 
         *createModal({ payload }, { call, put }) {
             try {
-                if (payload && payload.supplierASCode) {
+                if (payload && payload.id) {
                     //有油站信息
                     yield put({
                         type: 'createModalForm',
                         payload: {
-                            station: payload,
+                            ...payload,
                         },
                     });
                 } else {
@@ -113,12 +105,7 @@ const Model = {
                     yield put({
                         type: 'createModalForm',
                         payload: {
-                            station: {
-                                regionName: '',
-                                startDT: null,
-                                supplierASCode: '',
-                                supplierASName: '',
-                            },
+                            ...payload
                         },
                     });
                 }
@@ -214,14 +201,11 @@ const Model = {
             newstate.addOilModalVisible = true;
             newstate.actiontype = 'create';
             newstate.formdata = {
-                role: '0', // 默认请选择
-                userobjno: '', // 油站编号
-                userobjname: '', // 油站名称
-                mobile: '', // 手机号
-                nicknamenative: '', // 用户姓名
-                password: '', // 登录密码
-                status: '3', // 状态：默认开启3,废弃8
-                ...payload, //油站信息
+                imgList:[],// 图片列表
+                name:"", // 意图名称
+                replyExtendsList:[],// 文本消息集合
+                resourceList:'',// 资源集合
+                id:'',
             };
             return newstate;
         },

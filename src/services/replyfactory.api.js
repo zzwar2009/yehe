@@ -20,20 +20,26 @@ export async function queryWorkerById(params) {
     });
 }
 
-// 创建和修改
+// 创建
 export async function createEntity(params) {
-    const roleId = params.role;
-    const queryData = {
-        roles: [
-            {
-                id: roleId,
-            },
-        ],
-        ...params,
-    };
-    return request(UrlConfig.trans_ip, '/OilUserOilUsersAddV2', {
+    console.log(params);
+    const imgList = params.imgList.map(function(item){
+        return item;
+    })
+    const replyExtendsList = params.replyExtendsList.map(function(item){
+        return {
+            content:item
+        };
+    })
+    const resourceList = params.resourceList || [];
+    return request(UrlConfig.new_host, 'chat/addReply', {
         method: 'POST',
-        data: queryData,
+        data: {
+            ...params,
+            replyExtendsList,
+            resourceList:JSON.stringify(resourceList),
+            imgList:JSON.stringify(imgList)
+        },
     });
 }
 
