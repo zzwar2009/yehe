@@ -7,7 +7,7 @@ import {
     bindStation,
     unBindStation,
     queryWorkerById,
-} from '@/services/refuelworker.api';
+} from '@/services/sayhi.api';
 import { queryStations } from '@/services/station.api';
 const Model = {
     namespace: 'sayhi',
@@ -20,19 +20,9 @@ const Model = {
         addOilModalVisible: false, // 是否展示新建弹窗
         actiontype: undefined, // 弹窗动作类型
         formdata: {
-            // 新建修改弹窗内表单值
-            userobjno: '', // 油站编号
-            userobjname: '', // 油站名称
-            mobile: '', // 手机号
-            nicknamenative: '', // 用户姓名
-            password: '', // 登录密码
-            status: '3', // 状态：默认开启3,废弃8
-            station: {
-                regionName: '',
-                startDT: null,
-                supplierASCode: '',
-                supplierASName: '',
-            },
+            imgList:[],// 图片列表
+            replyExtendsList:[],// 文本消息集合
+            id:'',
         },
         relatedStationModalVisible: false, // 绑定油站弹窗
         relatedStationFormdata: {
@@ -154,19 +144,21 @@ const Model = {
             }
         },
 
-        *updateModal({ payload }, { call, put }) {
+        *queryEntity({ payload }, { call, put }) {
             try {
-                const { userobjname, userobjno, userid } = payload;
+                // debugger;
+                // imgList:[],// 图片列表
+                // replyExtendsList:[],// 文本消息集合
                 const response = yield call(queryWorkerById, {
-                    userId: userid,
+                    // userId: userid,
                 });
-                const { code, result } = response;
-                if (code === 200 && result) {
+                const { status, entity } = response;
+                if (status === "OK" && entity) {
                     yield put({
                         type: 'updateModalAfter',
                         payload: {
                             // ...payload,
-                            ...result,
+                            ...entity,
                         },
                     });
                 } else {
@@ -228,24 +220,25 @@ const Model = {
 
         updateModalAfter(state, { payload }) {
             let newstate = Object.assign({}, state);
-            newstate.addOilModalVisible = true;
-            newstate.actiontype = 'update';
-            const { regionName, startDT, supplierASCode, supplierASName, userobjno } = payload;
-            let role = '';
-            if (payload.platRoleInfos && payload.platRoleInfos.length > 0) {
-                role = payload.platRoleInfos[0].roleId;
-            }
+
+
+            const { img,// 图片列表
+                greetExtendsList, // 意图名称
+                id } = payload;
+            
+            let replyExtendsListArr = [];
+            
+            if(greetExtendsList && Array.isArray(greetExtendsList)){
+                replyExtendsListArr = greetExtendsList.map(function(item){
+                    return item.content;
+                })
+            }            
+
             newstate.formdata = {
                 ...payload,
-                role,
-                stationId: userobjno,
-                status: String(payload.status),
-                station: {
-                    regionName,
-                    startDT,
-                    supplierASCode,
-                    supplierASName,
-                },
+                replyExtendsList:replyExtendsListArr,
+                imgList:payload.img
+                
             };
             console.log(newstate);
             return newstate;

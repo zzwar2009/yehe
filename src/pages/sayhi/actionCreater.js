@@ -52,6 +52,17 @@ export function createEntity(payload) {
         payload,
     };
 }
+
+export function queryEntity(payload) {
+    return {
+        type: `${namespace}/queryEntity`,
+        payload,
+    };
+}
+
+
+
+
 export function changePwd(payload) {
     return {
         type: `${namespace}/changePwd`,
