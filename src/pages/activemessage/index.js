@@ -103,19 +103,31 @@ class OilPerson extends Component {
                 align: 'center',
                 width: 300,
                 // eslint-disable-next-line no-unused-vars
-                render: (text, record, index) => (
-                    <div>
-                        <Button type="primary" onClick={() => this.showChangeEntityModal(record)}>
-                            修改信息
-                        </Button>
-                        <Button
-                            style={{ marginLeft: 10 }}
-                            onClick={() => this.DeleteEntity(record)}
-                        >
-                            删除
-                        </Button>
-                    </div>
-                ),
+                render: (text, record, index) => {
+
+
+                    if(record.withdraw == 1){
+                        return <Button
+                                disabled
+                            >
+                                已撤回
+                            </Button>
+                    }else{
+                       return (<div>
+                            <Button type="primary" onClick={() => this.showChangeEntityModal(record)}>
+                                修改信息
+                            </Button>
+                            <Button
+                                style={{ marginLeft: 10 }}
+                                onClick={() => this.DeleteEntity(record)}
+                            >
+                                撤回
+                            </Button>
+                        </div>)
+                    }
+                }
+                    
+                
             },
         ];
         this.state = {
@@ -246,8 +258,8 @@ class OilPerson extends Component {
     DeleteEntity = record => {
         let that = this;
         confirm({
-            title: '删除',
-            content: `确定删除'${record.name}' ？`,
+            title: '撤回',
+            content: `确定撤回'${record.name}' ？`,
             okText: '确定',
             okType: 'danger',
             cancelText: '取消',
@@ -257,11 +269,11 @@ class OilPerson extends Component {
                 delEntity(record.id).then(res => {
                     const { status } = res;
                     if (status === "OK") {
-                        message.success('删除成功');
+                        message.success('撤回成功');
                         // 刷新列表
                         that.refreshList();
                     } else {
-                        message.error(res.message || '删除失败');
+                        message.error(res.message || '撤回失败');
                     }
                 });
             },
