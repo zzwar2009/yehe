@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import Link from 'umi/link';
 import { connect } from 'dva';
 import LoginComponents from './components/Login';
+// import VerifyCode from './components/Login/VerifyCode';
 import styles from './style.less';
 const { Tab, UserName, Password, Mobile, Captcha, Submit } = LoginComponents;
 @connect(({ login, loading }) => ({
@@ -26,6 +27,7 @@ class Login extends Component {
     
     if (!err) {
       const { dispatch } = this.props;
+      // {userName: "admin", password: "123456"}
       dispatch({
         type: 'login/login',
         payload: { ...values, type },
@@ -99,7 +101,7 @@ class Login extends Component {
               name="userName"
               placeholder={`${formatMessage({
                 id: 'user-login.login.userName',
-              })}: admin or user`}
+              })}: username`}
               rules={[
                 {
                   required: true,
@@ -113,7 +115,7 @@ class Login extends Component {
               name="password"
               placeholder={`${formatMessage({
                 id: 'user-login.login.password',
-              })}: ant.design`}
+              })}: password`}
               rules={[
                 {
                   required: true,
@@ -131,6 +133,7 @@ class Login extends Component {
               }}
             />
           <div>
+            {/* 验证码：<VerifyCode/> */}
             <Checkbox checked={autoLogin} onChange={this.changeAutoLogin}>
               <FormattedMessage id="user-login.login.remember-me" />
             </Checkbox>
@@ -143,6 +146,7 @@ class Login extends Component {
               <FormattedMessage id="user-login.login.forgot-password" />
             </a>
           </div>
+          
           <Submit loading={submitting}>
             <FormattedMessage id="user-login.login.login" />
           </Submit>

@@ -29,7 +29,8 @@ class SecurityLayout extends React.Component {
     const token = getToken();
     // const isLogin = currentUser && currentUser.userid;
 
-    const isLogin = token != '' && token != undefined;
+    let isLogin = token != '' && token != undefined;
+    // isLogin = true;
 
     const queryString = stringify({
       redirect: window.location.href,

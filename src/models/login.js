@@ -1,6 +1,6 @@
 import { routerRedux } from 'dva/router';
 import { stringify } from 'querystring';
-import { fakeAccountLogin, getFakeCaptcha } from '@/services/login';
+import { fakeAccountLogin, getFakeCaptcha ,login} from '@/services/login';
 import { setAuthority ,delAuthority} from '@/utils/authority';
 
 import { setToken ,delToken} from '@/utils/token';
@@ -12,13 +12,13 @@ const Model = {
   },
   effects: {
     *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
+      const response = yield call(login, payload);
       yield put({
         type: 'changeLoginStatus',
         payload: response,
       }); // Login successfully
 
-      if (response.status === 'ok') {
+      if (response.status === 'OK') {
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params;
@@ -64,6 +64,7 @@ const Model = {
     changeLoginStatus(state, { payload }) {
       payload.currentAuthority='admin';// 设置假的权限，拥有所有权限
       setAuthority(payload.currentAuthority);
+      // setToken()
       // 站点油token
       setToken('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIxMDAxNCIsIlRpbWVTdGFtcCI6MTU3NDQwMzk5MX0.yY-UN_sClSBYzQujDoiy0K8pLPQWo98H6XQ4yxknnqc');
       return { ...state, status: payload.status, type: payload.type };

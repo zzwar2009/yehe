@@ -53,11 +53,11 @@ const token = getToken('token') || '';
 console.log(token)
 const request = extend({
   errorHandler,
-  headers: {
-    'Authorization': token
-  },
+  // headers: {
+  //   'Authorization': token
+  // },
   // 默认错误处理
-  // credentials: 'include', // 默认请求是否带上cookie
+  credentials: 'include', // 默认请求是否带上cookie
 });
 
 //为了少改 代码 get方法的参数名叫parmas ,umi-request规定的
