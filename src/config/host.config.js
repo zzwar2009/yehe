@@ -28,7 +28,8 @@ const UrlConfig = {
     upload_files_url: `https://dfs.tjyunshi.com/upload`,
     trans_ip: `${trans_ip}api/v1.0`,
     // new_host :`http://47.97.187.218:8080/api/manage/v1/`
-    new_host :`http://118.89.16.143/api/manage/v1/`
+    // new_host :`http://118.89.16.143/api/manage/v1/`
+    new_host :`http://yehegm.davidside.ink/api/manage/v1/`
     
 };
 
