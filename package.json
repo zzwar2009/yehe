@@ -25,7 +25,7 @@
     "test:all": "node ./tests/run-tests.js",
     "test:component": "umi test ./src/components",
     "ui": "umi ui",
-    "deploy": "cross-env BABELRC=true umi build && scp -r dist/* ubuntu@118.89.16.143:/data0/frontend"
+    "deploy": "cross-env BABELRC=true umi build && scp -r dist/* ubuntu@118.89.16.143:/data0/frontend/yeheconsole"
   },
   "husky": {
     "hooks": {
